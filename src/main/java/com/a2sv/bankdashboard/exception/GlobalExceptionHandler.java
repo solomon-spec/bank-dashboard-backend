@@ -1,6 +1,6 @@
 package com.a2sv.bankdashboard.exception;
 
-import com.a2sv.bankdashboard.dto.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
