@@ -3,9 +3,11 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -59,5 +61,42 @@ public class UserDetailsServiceImp implements UserDetailsService {
         );
 
         return new ApiResponse<>(true, "User updated successfully", userResponse);
+    }
+
+    public ApiResponse<?> getUser(String username) {
+        // Get the current authenticated user's username
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = repository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("User not found"));
+
+        if (username.equals(currentUsername)) {
+            UserResponse userResponse = new UserResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getEmail(),
+                    user.getDateOfBirth(),
+                    user.getPermanentAddress(),
+                    user.getPostalCode(),
+                    user.getUsername(),
+                    user.getPresentAddress(),
+                    user.getCity(),
+                    user.getCountry(),
+                    user.getProfilePicture(),
+                    user.getAccountCash(),
+                    user.getRole()
+            );
+            return new ApiResponse<>(true, "User found", userResponse);
+        } else {
+            PublicUserResponse publicUserResponse = new PublicUserResponse(
+                    user.getId(),
+                    user.getName(),
+                    user.getUsername(),
+                    user.getCity(),
+                    user.getCountry(),
+                    user.getProfilePicture()
+            );
+            return new ApiResponse<>(true, "User found", publicUserResponse);
+        }
     }
 }
