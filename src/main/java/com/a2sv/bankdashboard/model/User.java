@@ -66,6 +66,8 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @Embedded
+    private Preference preference;
 
     @Override
     public boolean isAccountNonExpired() {

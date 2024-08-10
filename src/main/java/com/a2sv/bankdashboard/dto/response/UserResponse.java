@@ -1,5 +1,6 @@
 package com.a2sv.bankdashboard.dto.response;
 
+import com.a2sv.bankdashboard.model.Preference;
 import com.a2sv.bankdashboard.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,4 +25,5 @@ public class UserResponse {
     private String profilePicture;
     private Double accountCash;
     private Role role;
+    private Preference preference;
 }

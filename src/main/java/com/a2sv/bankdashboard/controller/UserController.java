@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
+import com.a2sv.bankdashboard.model.Preference;
 import com.a2sv.bankdashboard.service.UserDetailsServiceImp;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,11 @@ public class UserController {
     @GetMapping("/current")
     public ResponseEntity<ApiResponse<?>> getCurrentUser() {
         ApiResponse<?> response = userDetailsService.getCurrentUser();
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/update-preference")
+    public ResponseEntity<ApiResponse<UserResponse>> updatePreference(@RequestBody Preference preference) {
+        ApiResponse<UserResponse> response = userDetailsService.savePreference(preference);
         return ResponseEntity.ok(response);
     }
 }
