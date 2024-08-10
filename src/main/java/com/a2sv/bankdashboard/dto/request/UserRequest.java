@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegistrationRequest {
+public class UserRequest {
     @NotBlank(message = "Name is mandatory")
     private String name;
 

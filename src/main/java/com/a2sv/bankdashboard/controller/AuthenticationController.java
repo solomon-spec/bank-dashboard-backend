@@ -2,7 +2,7 @@ package com.a2sv.bankdashboard.controller;
 
 import com.a2sv.bankdashboard.dto.request.ChangePassword;
 import com.a2sv.bankdashboard.dto.request.UserLogin;
-import com.a2sv.bankdashboard.dto.request.UserRegistrationRequest;
+import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
 import com.a2sv.bankdashboard.service.AuthenticationService;
@@ -26,7 +26,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
-            @Valid @RequestBody UserRegistrationRequest request
+            @Valid @RequestBody UserRequest request
     ) {
         return ResponseEntity.ok(authService.register(request));
     }

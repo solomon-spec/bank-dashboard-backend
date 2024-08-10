@@ -2,7 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.ChangePassword;
 import com.a2sv.bankdashboard.dto.request.UserLogin;
-import com.a2sv.bankdashboard.dto.request.UserRegistrationRequest;
+import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
 import com.a2sv.bankdashboard.model.Role;
@@ -44,7 +44,7 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public ApiResponse<AuthenticationResponse> register(UserRegistrationRequest request) {
+    public ApiResponse<AuthenticationResponse> register(UserRequest request) {
 
         // check if user already exist. if exist than authenticate the user
         if(repository.findByUsername(request.getUsername()).isPresent()) {
