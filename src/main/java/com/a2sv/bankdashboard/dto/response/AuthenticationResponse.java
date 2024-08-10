@@ -1,4 +1,4 @@
-package com.a2sv.bankdashboard.dto;
+package com.a2sv.bankdashboard.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.a2sv.bankdashboard.dto;
+package com.a2sv.bankdashboard.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
