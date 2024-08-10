@@ -1,6 +1,7 @@
 package com.a2sv.bankdashboard.service;
 
-import com.a2sv.bankdashboard.dto.AuthenticationResponse;
+import com.a2sv.bankdashboard.dto.*;
+import com.a2sv.bankdashboard.model.Role;
 import com.a2sv.bankdashboard.model.Token;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.TokenRepository;
@@ -8,10 +9,9 @@ import com.a2sv.bankdashboard.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,11 +40,11 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public AuthenticationResponse register(User request) {
+    public  ApiResponse<AuthenticationResponse> register(UserRegistrationRequest request) {
 
         // check if user already exist. if exist than authenticate the user
         if(repository.findByUsername(request.getUsername()).isPresent()) {
-            return new AuthenticationResponse(null, null,"User already exist");
+            return new ApiResponse<>(false, "User already exists", null);
         }
 
         User user = new User();
@@ -61,7 +61,7 @@ public class AuthenticationService {
         user.setProfilePicture(request.getProfilePicture());
         user.setAccountCash(0.0);
 
-        user.setRole(request.getRole());
+        user.setRole(Role.USER);
 
         user = repository.save(user);
 
@@ -70,26 +70,31 @@ public class AuthenticationService {
 
         saveUserToken(accessToken, refreshToken, user);
 
-        return new AuthenticationResponse(accessToken, refreshToken,"User registration was successful");
 
+        // Create the authentication response
+        AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken, "User registration was successful");
+
+        // Return the API response
+        return new ApiResponse<>(true, "User registered successfully", authResponse);
     }
 
-    public AuthenticationResponse authenticate(User request) {
+    public ApiResponse<AuthenticationResponse> authenticate(UserLogin request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getUserName(),
                         request.getPassword()
                 )
         );
 
-        User user = repository.findByUsername(request.getUsername()).orElseThrow();
+        User user = repository.findByUsername(request.getUserName()).orElseThrow();
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
         revokeAllTokenByUser(user);
         saveUserToken(accessToken, refreshToken, user);
 
-        return new AuthenticationResponse(accessToken, refreshToken, "User login was successful");
+        AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken, "User login was successful");
+        return new ApiResponse<>(true, "User authenticated successfully", authResponse);
 
     }
     private void revokeAllTokenByUser(User user) {
@@ -113,15 +118,16 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public ResponseEntity refreshToken(
+    public ApiResponse<String> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response) {
         // extract the token from authorization header
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return new ApiResponse<>(false, "Invalid authorization header", null);
         }
+
 
         String token = authHeader.substring(7);
 
@@ -141,10 +147,28 @@ public class AuthenticationService {
             revokeAllTokenByUser(user);
             saveUserToken(accessToken, refreshToken, user);
 
-            return new ResponseEntity(new AuthenticationResponse(accessToken, refreshToken, "New token generated"), HttpStatus.OK);
+            return new ApiResponse<>(true, "Token refreshed successfully", accessToken);
         }
 
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        return new ApiResponse<>(false, "Invalid refresh token", null);
+
+    }
+
+    public ApiResponse<Void> changePassword(ChangePassword changePassword){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = repository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Validate the current password
+        if (!passwordEncoder.matches(changePassword.getPassword(), user.getPassword())) {
+            return new ApiResponse<>(false, "Current password is incorrect", null);
+        }
+
+        // Update the user's password
+        user.setPassword(passwordEncoder.encode(changePassword.getNewPassword()));
+        repository.save(user);
+
+        return new ApiResponse<>(true, "Password changed successfully", null);
 
     }
 }
