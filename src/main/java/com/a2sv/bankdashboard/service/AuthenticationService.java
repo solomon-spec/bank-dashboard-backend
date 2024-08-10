@@ -48,11 +48,18 @@ public class AuthenticationService {
         }
 
         User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setDateOfBirth(request.getDateOfBirth());
+        user.setPermanentAddress(request.getPermanentAddress());
+        user.setPostalCode(request.getPostalCode());
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
+        user.setPresentAddress(request.getPresentAddress());
+        user.setCity(request.getCity());
+        user.setCountry(request.getCountry());
+        user.setProfilePicture(request.getProfilePicture());
+        user.setAccountCash(0.0);
 
         user.setRole(request.getRole());
 
