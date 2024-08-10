@@ -99,4 +99,12 @@ public class UserDetailsServiceImp implements UserDetailsService {
             return new ApiResponse<>(true, "User found", publicUserResponse);
         }
     }
+
+    public ApiResponse<?> getCurrentUser() {
+        // Get the current authenticated user's username
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Call the existing getUser method with the retrieved username
+        return getUser(username);
+    }
 }
