@@ -21,7 +21,7 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    public CompanyResponse findById(Long id) {
+    public CompanyResponse findById(String id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
         return convertToDto(company);
@@ -33,7 +33,7 @@ public class CompanyService {
         return convertToDto(savedCompany);
     }
 
-    public CompanyResponse update(Long id, @Valid CompanyRequest companyRequest) {
+    public CompanyResponse update(String id, @Valid CompanyRequest companyRequest) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
         company.setCompanyName(companyRequest.getCompanyName());
@@ -43,7 +43,7 @@ public class CompanyService {
         return convertToDto(updatedCompany);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         if (!companyRepository.existsById(id)) {
             throw new RuntimeException("Company not found");
         }

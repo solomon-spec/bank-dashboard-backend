@@ -25,5 +25,5 @@ public class CardResponseDetailed {
     private String cardType;
 
 
-    private Integer userId;
+    private String userId;
 }

@@ -8,6 +8,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface TransactionRepository extends MongoRepository<Transaction, Long> {
+public interface TransactionRepository extends MongoRepository<Transaction, String> {
     Page<Transaction> findBySender(User sender, Pageable pageable);
 }

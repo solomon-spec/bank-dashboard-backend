@@ -35,7 +35,7 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public TransactionResponse getTransactionById(Long transactionId) {
+    public TransactionResponse getTransactionById(String transactionId) {
         return transactionRepository.findById(transactionId)
                 .map(this::convertToResponse)
                 .orElse(null);

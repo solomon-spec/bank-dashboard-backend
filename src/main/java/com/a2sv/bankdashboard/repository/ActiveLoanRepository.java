@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface ActiveLoanRepository extends MongoRepository<ActiveLoan, Long> {
+public interface ActiveLoanRepository extends MongoRepository<ActiveLoan, String> {
     List<ActiveLoan> findByUserUsername(String user_username);
 }

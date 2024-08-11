@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TokenRepository extends MongoRepository<Token, Integer> {
+public interface TokenRepository extends MongoRepository<Token, String> {
 
-    List<Token> findByUserIdAndLoggedOutFalse(Integer userId);
+    List<Token> findByUserIdAndLoggedOutFalse(String user_id);
 
     Optional<Token> findByAccessToken(String token);
 

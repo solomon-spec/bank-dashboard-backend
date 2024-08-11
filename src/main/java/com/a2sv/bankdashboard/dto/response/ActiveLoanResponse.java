@@ -18,5 +18,5 @@ public class ActiveLoanResponse {
     private double installment;
     private ActiveLoanType type;
     private ActiveLoneStatus activeLoneStatus;
-    private Integer userId;
+    private String userId;
 }

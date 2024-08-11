@@ -49,7 +49,7 @@ public class CardService {
         return convertToCardResponseDetailed(cardRepository.save(card));
     }
 
-    public void removeCard(Long id) {
+    public void removeCard(String id) {
         Card card = cardRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Card not found")
         );
@@ -61,7 +61,7 @@ public class CardService {
         cardRepository.deleteById(id);
     }
 
-    public CardResponseDetailed getCardById(Long id) {
+    public CardResponseDetailed getCardById(String id) {
         return convertToCardResponseDetailed( cardRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Card not found")
         ));

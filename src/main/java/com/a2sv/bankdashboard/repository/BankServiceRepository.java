@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface BankServiceRepository extends MongoRepository<BankService, Long> {
+public interface BankServiceRepository extends MongoRepository<BankService, String> {
     List<BankService> findByNameContaining(String name);
 }

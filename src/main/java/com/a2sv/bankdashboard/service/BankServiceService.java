@@ -7,7 +7,6 @@ import com.a2sv.bankdashboard.model.BankService;
 import com.a2sv.bankdashboard.repository.BankServiceRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,7 +44,7 @@ public class BankServiceService {
         return new ApiResponse<>(true, "Bank service created successfully", response);
     }
 
-    public ApiResponse<BankServiceResponse> updateService(Long id, BankServiceRequest request) {
+    public ApiResponse<BankServiceResponse> updateService(String id, BankServiceRequest request) {
         BankService bankService = repository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
         bankService.setName(request.getName());
         bankService.setDetails(request.getDetails());
@@ -68,12 +67,12 @@ public class BankServiceService {
         return new ApiResponse<>(true, "Bank service updated successfully", response);
     }
 
-    public ApiResponse<Void> deleteService(Long id) {
+    public ApiResponse<Void> deleteService(String id) {
         repository.deleteById(id);
         return new ApiResponse<>(true, "Bank service deleted successfully", null);
     }
 
-    public ApiResponse<BankServiceResponse> getService(Long id) {
+    public ApiResponse<BankServiceResponse> getService(String id) {
         BankService bankService = repository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
         BankServiceResponse response = new BankServiceResponse();
         response.setId(bankService.getId());

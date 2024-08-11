@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface CardRepository extends MongoRepository<Card,Long> {
+public interface CardRepository extends MongoRepository<Card,String> {
     List<Card> findByUserUsername(String user_username);
 }

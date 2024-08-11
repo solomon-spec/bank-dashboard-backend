@@ -51,7 +51,7 @@ public class ActiveLoanService {
     }
 
 
-    public ActiveLoanResponse findById(Long id) {
+    public ActiveLoanResponse findById(String id) {
         return convertToDto(activeLoanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Active loan not found")));
     }
@@ -83,7 +83,7 @@ public class ActiveLoanService {
 
 
 
-    public ActiveLoanResponse approveLoan(Long id) {
+    public ActiveLoanResponse approveLoan(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Active loan not found"));
 
@@ -99,7 +99,7 @@ public class ActiveLoanService {
         return convertToDto(activeLoanRepository.save(loan));
     }
 
-    public void rejectLoan(Long id) {
+    public void rejectLoan(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Active loan not found"));
 
@@ -109,7 +109,7 @@ public class ActiveLoanService {
 
         activeLoanRepository.save(loan);
     }
-    public ActiveLoanResponse repay(Long id) {
+    public ActiveLoanResponse repay(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Active loan not found"));
         User user = loan.getUser();
