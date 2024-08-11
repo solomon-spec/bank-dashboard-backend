@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class AuthenticationResponse<T> {
     @JsonProperty("access_token")
     private String accessToken;
 
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    @JsonProperty("message")
-    private String message;
+    @JsonProperty("data")
+    private T data;
 
 }

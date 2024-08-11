@@ -5,6 +5,7 @@ import com.a2sv.bankdashboard.dto.request.UserLogin;
 import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
+import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.model.Role;
 import com.a2sv.bankdashboard.model.Token;
 import com.a2sv.bankdashboard.model.User;
@@ -27,6 +28,7 @@ public class AuthenticationService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserDetailsServiceImp userDetailsServiceImp;
 
     private final TokenRepository tokenRepository;
 
@@ -34,17 +36,18 @@ public class AuthenticationService {
 
     public AuthenticationService(UserRepository repository,
                                  PasswordEncoder passwordEncoder,
-                                 JwtService jwtService,
+                                 JwtService jwtService, UserDetailsServiceImp userDetailsServiceImp,
                                  TokenRepository tokenRepository,
                                  AuthenticationManager authenticationManager) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userDetailsServiceImp = userDetailsServiceImp;
         this.tokenRepository = tokenRepository;
         this.authenticationManager = authenticationManager;
     }
 
-    public ApiResponse<AuthenticationResponse> register(UserRequest request) {
+    public ApiResponse<AuthenticationResponse<UserResponse>> register(UserRequest request) {
 
         // check if user already exist. if exist than authenticate the user
         if(repository.findByUsername(request.getUsername()).isPresent()) {
@@ -64,6 +67,7 @@ public class AuthenticationService {
         user.setCountry(request.getCountry());
         user.setProfilePicture(request.getProfilePicture());
         user.setAccountCash(0.0);
+        user.setPreference(request.getPreference());
 
         user.setRole(Role.USER);
 
@@ -76,13 +80,14 @@ public class AuthenticationService {
 
 
         // Create the authentication response
-        AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken, "User registration was successful");
+        AuthenticationResponse<UserResponse> authResponse = new AuthenticationResponse<UserResponse>(
+                accessToken, refreshToken, userDetailsServiceImp.convertToUserDto(user) );
 
         // Return the API response
         return new ApiResponse<>(true, "User registered successfully", authResponse);
     }
 
-    public ApiResponse<AuthenticationResponse> authenticate(UserLogin request) {
+    public ApiResponse<AuthenticationResponse<Void>> authenticate(UserLogin request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUserName(),
@@ -97,7 +102,7 @@ public class AuthenticationService {
         revokeAllTokenByUser(user);
         saveUserToken(accessToken, refreshToken, user);
 
-        AuthenticationResponse authResponse = new AuthenticationResponse(accessToken, refreshToken, "User login was successful");
+        AuthenticationResponse<Void> authResponse = new AuthenticationResponse<>(accessToken, refreshToken, null);
         return new ApiResponse<>(true, "User authenticated successfully", authResponse);
 
     }

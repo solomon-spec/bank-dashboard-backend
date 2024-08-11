@@ -35,7 +35,7 @@ public class UserController {
         ApiResponse<?> response = userDetailsService.getCurrentUser();
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/update-preference")
+    @PutMapping("/update-preference")
     public ResponseEntity<ApiResponse<UserResponse>> updatePreference(@RequestBody Preference preference) {
         ApiResponse<UserResponse> response = userDetailsService.savePreference(preference);
         return ResponseEntity.ok(response);

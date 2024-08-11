@@ -8,6 +8,7 @@ import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -57,6 +58,7 @@ public class ActiveLoanService {
 
 
     public ActiveLoanResponse save(ActiveLoanRequest activeLoanRequest) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         ActiveLoan activeLoan = new ActiveLoan();
         activeLoan.setLoanAmount(activeLoanRequest.getLoanAmount());
         activeLoan.setDuration(activeLoanRequest.getDuration());
@@ -64,7 +66,10 @@ public class ActiveLoanService {
         activeLoan.setType(activeLoanRequest.getType());
         activeLoan.setActiveLoneStatus(ActiveLoneStatus.pending);
         activeLoan.setType(activeLoanRequest.getType());
-
+        activeLoan.setUser(userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        ));
+        activeLoan.setAmountLeftToRepay(activeLoan.getLoanAmount());
         int numberOfPayment = activeLoanRequest.getDuration() * 12;
         double principal = activeLoan.getLoanAmount();
         double monthlyInterestRate = (activeLoan.getInterestRate() / 12);

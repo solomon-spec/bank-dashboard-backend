@@ -75,22 +75,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 new UsernameNotFoundException("User not found"));
         user.setPreference(preference);
         user = userRepository.save(user);
-        UserResponse userResponse = new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getDateOfBirth(),
-                user.getPermanentAddress(),
-                user.getPostalCode(),
-                user.getUsername(),
-                user.getPresentAddress(),
-                user.getCity(),
-                user.getCountry(),
-                user.getProfilePicture(),
-                user.getAccountCash(),
-                user.getRole(),
-                user.getPreference()
-        );
+        UserResponse userResponse = convertToUserDto(user);
         return new ApiResponse<>(true, "User Preference updated successfully ", userResponse);
 
     }
@@ -102,22 +87,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 new UsernameNotFoundException("User not found"));
 
         if (username.equals(currentUsername)) {
-            UserResponse userResponse = new UserResponse(
-                    user.getId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getDateOfBirth(),
-                    user.getPermanentAddress(),
-                    user.getPostalCode(),
-                    user.getUsername(),
-                    user.getPresentAddress(),
-                    user.getCity(),
-                    user.getCountry(),
-                    user.getProfilePicture(),
-                    user.getAccountCash(),
-                    user.getRole(),
-                    user.getPreference()
-            );
+            UserResponse userResponse = convertToUserDto(user);
             return new ApiResponse<>(true, "User found", userResponse);
         } else {
             PublicUserResponse publicUserResponse = new PublicUserResponse(
@@ -138,5 +108,23 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
         // Call the existing getUser method with the retrieved username
         return getUser(username);
+    }
+    public UserResponse convertToUserDto(User user){
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getDateOfBirth(),
+                user.getPermanentAddress(),
+                user.getPostalCode(),
+                user.getUsername(),
+                user.getPresentAddress(),
+                user.getCity(),
+                user.getCountry(),
+                user.getProfilePicture(),
+                user.getAccountCash(),
+                user.getRole(),
+                user.getPreference()
+        );
     }
 }

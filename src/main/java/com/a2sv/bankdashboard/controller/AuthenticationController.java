@@ -5,6 +5,7 @@ import com.a2sv.bankdashboard.dto.request.UserLogin;
 import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
+import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +28,9 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthenticationResponse>> register(
+    public
+    ResponseEntity
+            <ApiResponse<AuthenticationResponse<UserResponse>>> register(
             @Valid @RequestBody UserRequest request
     ) {
         return ResponseEntity.ok(authService.register(request));
@@ -35,7 +38,8 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public
-    ResponseEntity<ApiResponse<AuthenticationResponse>> login(
+    ResponseEntity
+            <ApiResponse<AuthenticationResponse<Void>>> login(
            @Valid @RequestBody UserLogin request
     ) {
         return ResponseEntity.ok(authService.authenticate(request));

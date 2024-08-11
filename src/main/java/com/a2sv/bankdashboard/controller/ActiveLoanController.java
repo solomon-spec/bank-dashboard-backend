@@ -4,6 +4,7 @@ import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.service.ActiveLoanService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class ActiveLoanController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ActiveLoanResponse>> requestLoan(@RequestBody ActiveLoanRequest activeLoanRequest) {
+    public ResponseEntity<ApiResponse<ActiveLoanResponse>> requestLoan(@Valid @RequestBody ActiveLoanRequest activeLoanRequest) {
         ActiveLoanResponse loan = activeLoanService.save(activeLoanRequest);
         return ResponseEntity.ok(new ApiResponse<>(true, "Loan requested successfully", loan));
     }
