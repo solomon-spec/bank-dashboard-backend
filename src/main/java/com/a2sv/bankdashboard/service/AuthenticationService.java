@@ -80,7 +80,7 @@ public class AuthenticationService {
 
 
         // Create the authentication response
-        AuthenticationResponse<UserResponse> authResponse = new AuthenticationResponse<UserResponse>(
+        AuthenticationResponse<UserResponse> authResponse = new AuthenticationResponse<>(
                 accessToken, refreshToken, userDetailsServiceImp.convertToUserDto(user) );
 
         // Return the API response
@@ -112,9 +112,7 @@ public class AuthenticationService {
             return;
         }
 
-        validTokens.forEach(t-> {
-            t.setLoggedOut(true);
-        });
+        validTokens.forEach(t-> t.setLoggedOut(true));
 
         tokenRepository.saveAll(validTokens);
     }
