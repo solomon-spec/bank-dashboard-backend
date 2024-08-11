@@ -27,19 +27,19 @@ public class BankServiceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<BankServiceResponse>> updateService(@PathVariable Long id,@Valid @RequestBody BankServiceRequest request) {
+    public ResponseEntity<ApiResponse<BankServiceResponse>> updateService(@PathVariable String id,@Valid @RequestBody BankServiceRequest request) {
         ApiResponse<BankServiceResponse> response = bankServiceService.updateService(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable String id) {
         ApiResponse<Void> response = bankServiceService.deleteService(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<BankServiceResponse>> getService(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<BankServiceResponse>> getService(@PathVariable String id) {
         ApiResponse<BankServiceResponse> response = bankServiceService.getService(id);
         return ResponseEntity.ok(response);
     }

@@ -34,7 +34,7 @@ public class ActiveLoanController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ActiveLoanResponse>> getActiveLoanById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ActiveLoanResponse>> getActiveLoanById(@PathVariable String id) {
         ActiveLoanResponse loan = activeLoanService.findById(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Active loan retrieved successfully", loan));
     }
@@ -46,13 +46,13 @@ public class ActiveLoanController {
     }
 
     @PostMapping("/{id}/approve")
-    public ResponseEntity<ApiResponse<ActiveLoanResponse>> approveLoan(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ActiveLoanResponse>> approveLoan(@PathVariable String id) {
         ActiveLoanResponse loan = activeLoanService.approveLoan(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Loan approved successfully", loan));
     }
 
     @PostMapping("/{id}/reject")
-    public ResponseEntity<ApiResponse<Void>> rejectLoan(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> rejectLoan(@PathVariable String id) {
         activeLoanService.rejectLoan(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Loan rejected successfully", null));
     }

@@ -29,7 +29,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponse>> getCompanyById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> getCompanyById(@PathVariable String id) {
         CompanyResponse company = companyService.findById(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Company retrieved successfully", company));
     }
@@ -41,13 +41,13 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponse>> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> updateCompany(@PathVariable String id, @Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse company = companyService.update(id, companyRequest);
         return ResponseEntity.ok(new ApiResponse<>(true, "Company updated successfully", company));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable String id) {
         companyService.deleteById(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Company deleted successfully", null));
     }

@@ -29,13 +29,13 @@ public class CardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> removeCard(@PathVariable Long id) {
+    public ResponseEntity<Void> removeCard(@PathVariable String id) {
         cardService.removeCard(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CardResponseDetailed> getCardById(@PathVariable Long id) {
+    public ResponseEntity<CardResponseDetailed> getCardById(@PathVariable String id) {
         CardResponseDetailed card = cardService.getCardById(id);
         return ResponseEntity.ok(card);
     }
