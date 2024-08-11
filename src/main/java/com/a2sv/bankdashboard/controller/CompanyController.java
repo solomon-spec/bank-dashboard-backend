@@ -1,8 +1,8 @@
 package com.a2sv.bankdashboard.controller;
 
 import com.a2sv.bankdashboard.dto.request.CompanyRequest;
+import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.CompanyResponse;
-import com.a2sv.bankdashboard.model.Company;
 import com.a2sv.bankdashboard.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/companies")
+@RequestMapping("/companies")
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -23,31 +23,38 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyResponse> getAllCompanies(@RequestParam int page, @RequestParam int size) {
-        return companyService.findAll(page, size);
+    public ResponseEntity<ApiResponse<List<CompanyResponse>>> getAllCompanies(@RequestParam int page, @RequestParam int size) {
+        List<CompanyResponse> companies = companyService.findAll(page, size);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Companies retrieved successfully", companies));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CompanyResponse> getCompanyById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> getCompanyById(@PathVariable Long id) {
         CompanyResponse company = companyService.findById(id);
-        return ResponseEntity.ok(company);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Company retrieved successfully", company));
     }
 
     @PostMapping
-    public ResponseEntity<CompanyResponse> createCompany(@Valid @RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> createCompany(@Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse company = companyService.save(companyRequest);
-        return ResponseEntity.ok(company);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Company created successfully", company));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest companyRequest) {
+    public ResponseEntity<ApiResponse<CompanyResponse>> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyRequest companyRequest) {
         CompanyResponse company = companyService.update(id, companyRequest);
-        return ResponseEntity.ok(company);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Company updated successfully", company));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCompany(@PathVariable Long id) {
         companyService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Company deleted successfully", null));
+    }
+
+    @GetMapping("/trending-companies")
+    public ResponseEntity<ApiResponse<List<CompanyResponse>>> getTrendingCompanies() {
+        List<CompanyResponse> companies = companyService.trendingStock();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Trending companies retrieved successfully", companies));
     }
 }

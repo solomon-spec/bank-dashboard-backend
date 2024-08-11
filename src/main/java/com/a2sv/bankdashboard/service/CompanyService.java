@@ -73,4 +73,7 @@ public class CompanyService {
         companyResponse.setIcon(company.getIcon());
         return companyResponse;
     }
+    public List<CompanyResponse> trendingStock(){
+        return companyRepository.findRandomCompanies().stream().map(this::convertToDto).toList();
+    }
 }
