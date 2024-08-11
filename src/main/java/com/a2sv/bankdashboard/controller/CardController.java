@@ -4,6 +4,7 @@ import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
 import com.a2sv.bankdashboard.service.CardService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,7 @@ public class CardController {
     }
 
     @PostMapping
-    public ResponseEntity<CardResponseDetailed> addCard(@RequestBody CardRequest cardRequest) {
+    public ResponseEntity<CardResponseDetailed> addCard(@Valid @RequestBody CardRequest cardRequest) {
         CardResponseDetailed newCard = cardService.addCard(cardRequest);
         return ResponseEntity.ok(newCard);
     }

@@ -4,6 +4,7 @@ import com.a2sv.bankdashboard.dto.request.BankServiceRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.BankServiceResponse;
 import com.a2sv.bankdashboard.service.BankServiceService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,13 @@ public class BankServiceController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<BankServiceResponse>> createService(@RequestBody BankServiceRequest request) {
+    public ResponseEntity<ApiResponse<BankServiceResponse>> createService(@Valid @RequestBody BankServiceRequest request) {
         ApiResponse<BankServiceResponse> response = bankServiceService.createService(request);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<BankServiceResponse>> updateService(@PathVariable Long id, @RequestBody BankServiceRequest request) {
+    public ResponseEntity<ApiResponse<BankServiceResponse>> updateService(@PathVariable Long id,@Valid @RequestBody BankServiceRequest request) {
         ApiResponse<BankServiceResponse> response = bankServiceService.updateService(id, request);
         return ResponseEntity.ok(response);
     }

@@ -5,6 +5,7 @@ import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.model.Preference;
 import com.a2sv.bankdashboard.service.UserDetailsServiceImp;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@Valid @RequestBody UserRequest request) {
         ApiResponse<UserResponse> response = userDetailsService.update(request);
         return ResponseEntity.ok(response);
     }
@@ -36,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     @PutMapping("/update-preference")
-    public ResponseEntity<ApiResponse<UserResponse>> updatePreference(@RequestBody Preference preference) {
+    public ResponseEntity<ApiResponse<UserResponse>> updatePreference(@Valid @RequestBody Preference preference) {
         ApiResponse<UserResponse> response = userDetailsService.savePreference(preference);
         return ResponseEntity.ok(response);
     }

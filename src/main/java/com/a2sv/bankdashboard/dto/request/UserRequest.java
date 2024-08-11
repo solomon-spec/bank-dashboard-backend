@@ -1,6 +1,7 @@
 package com.a2sv.bankdashboard.dto.request;
 
 import com.a2sv.bankdashboard.model.Preference;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -51,7 +52,8 @@ public class UserRequest {
     private String country;
 
     private String profilePicture;
-
+    @NotBlank
+    @Valid
     private Preference preference;
 
 }
