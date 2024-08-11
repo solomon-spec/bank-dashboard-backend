@@ -1,10 +1,14 @@
 package com.a2sv.bankdashboard.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class ActiveLoan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

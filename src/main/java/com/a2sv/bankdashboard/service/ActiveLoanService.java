@@ -1,6 +1,7 @@
 package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
+import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
 import com.a2sv.bankdashboard.model.ActiveLoan;
 import com.a2sv.bankdashboard.model.ActiveLoneStatus;
 import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
@@ -26,28 +27,43 @@ public class ActiveLoanService {
         this.userRepository = userRepository;
     }
 
-    public List<ActiveLoan> findAll() {
-        return activeLoanRepository.findAll();
+    public ActiveLoanResponse convertToDto(ActiveLoan activeLoan){
+        return new ActiveLoanResponse(
+                activeLoan.getSerialNumber(),
+                activeLoan.getLoanAmount(),
+                activeLoan.getAmountLeftToRepay(),
+                activeLoan.getDuration(),
+                activeLoan.getInterestRate(),
+                activeLoan.getInstallment(),
+                activeLoan.getType(),
+                activeLoan.getActiveLoneStatus(),
+                activeLoan.getUser().getId()
+
+        );
     }
-    public List<ActiveLoan> findUsersActiveLone(){
+    public List<ActiveLoanResponse> findAll() {
+        return activeLoanRepository.findAll().stream().map(this::convertToDto).toList();
+    }
+    public List<ActiveLoanResponse> findUsersActiveLoans(){
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        return activeLoanRepository.findByUserUsername(currentUsername);
+        return activeLoanRepository.findByUserUsername(currentUsername).stream().map(this::convertToDto).toList();
     }
 
 
-    public Optional<ActiveLoan> findById(Long id) {
-        return activeLoanRepository.findById(id);
+    public ActiveLoanResponse findById(Long id) {
+        return convertToDto(activeLoanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Active loan not found")));
     }
 
 
-    public ActiveLoan save(ActiveLoanRequest activeLoanRequest) {
+    public ActiveLoanResponse save(ActiveLoanRequest activeLoanRequest) {
         ActiveLoan activeLoan = new ActiveLoan();
         activeLoan.setLoanAmount(activeLoanRequest.getLoanAmount());
         activeLoan.setDuration(activeLoanRequest.getDuration());
         activeLoan.setInterestRate(activeLoanRequest.getInterestRate());
         activeLoan.setType(activeLoanRequest.getType());
         activeLoan.setActiveLoneStatus(ActiveLoneStatus.pending);
-
+        activeLoan.setType(activeLoanRequest.getType());
 
         int numberOfPayment = activeLoanRequest.getDuration() * 12;
         double principal = activeLoan.getLoanAmount();
@@ -56,13 +72,13 @@ public class ActiveLoanService {
                 (pow(1 + monthlyInterestRate, numberOfPayment) - 1));
         activeLoan.setInstallment(EMI);
 
-        return activeLoanRepository.save(activeLoan);
+        return convertToDto(activeLoanRepository.save(activeLoan));
     }
 
 
 
 
-    public ActiveLoan approveLoan(Long id) {
+    public ActiveLoanResponse approveLoan(Long id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Active loan not found"));
 
@@ -75,7 +91,7 @@ public class ActiveLoanService {
             throw new RuntimeException("User not found");
         });
 
-        return activeLoanRepository.save(loan);
+        return convertToDto(activeLoanRepository.save(loan));
     }
 
     public void rejectLoan(Long id) {

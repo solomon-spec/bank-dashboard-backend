@@ -2,9 +2,13 @@ package com.a2sv.bankdashboard.dto.response;
 
 import com.a2sv.bankdashboard.model.ActiveLoanType;
 import com.a2sv.bankdashboard.model.ActiveLoneStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActiveLoanResponse {
     private Long serialNumber;
     private double loanAmount;
@@ -14,5 +18,5 @@ public class ActiveLoanResponse {
     private double installment;
     private ActiveLoanType type;
     private ActiveLoneStatus activeLoneStatus;
-    private Long userId;
+    private Integer userId;
 }
