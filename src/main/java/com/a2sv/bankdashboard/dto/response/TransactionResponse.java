@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionResponse {
-    private Long transactionId;
+    private String transactionId;
     private TransactionType type;
     private String senderUserName;
     private String description;

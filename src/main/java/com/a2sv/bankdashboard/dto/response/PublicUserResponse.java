@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PublicUserResponse {
-    private Integer id;
+    private String id;
     private String name;
     private String username;
     private String city;

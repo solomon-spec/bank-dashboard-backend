@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class CompanyResponse {
-    private Long id;
+    private String id;
     private String companyName;
     private String type;
     private String icon;

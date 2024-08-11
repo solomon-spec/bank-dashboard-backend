@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CardResponse {
-    private Long id;
+    private String id;
     private String cardHolder;
     private String semiCardNumber;
     private String cardType;

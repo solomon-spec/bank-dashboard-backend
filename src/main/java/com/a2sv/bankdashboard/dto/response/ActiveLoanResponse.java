@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActiveLoanResponse {
-    private Long serialNumber;
+    private String serialNumber;
     private double loanAmount;
     private double amountLeftToRepay;
     private int duration;

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class BankServiceResponse {
-    private Long id;
+    private String id;
     private String name;
     private String details;
     private int numberOfUsers;

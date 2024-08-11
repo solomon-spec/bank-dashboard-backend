@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class CardResponseDetailed {
 
-    private Long id;
+    private String id;
 
     private double balance;
 
