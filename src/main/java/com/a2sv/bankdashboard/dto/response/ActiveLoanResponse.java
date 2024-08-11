@@ -1,13 +1,11 @@
-package com.a2sv.bankdashboard.model;
+package com.a2sv.bankdashboard.dto.response;
 
-import jakarta.persistence.*;
+import com.a2sv.bankdashboard.model.ActiveLoanType;
+import com.a2sv.bankdashboard.model.ActiveLoneStatus;
 import lombok.Data;
 
 @Data
-@Entity
-public class ActiveLoan {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ActiveLoanResponse {
     private Long serialNumber;
     private double loanAmount;
     private double amountLeftToRepay;
@@ -16,8 +14,5 @@ public class ActiveLoan {
     private double installment;
     private ActiveLoanType type;
     private ActiveLoneStatus activeLoneStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long userId;
 }
