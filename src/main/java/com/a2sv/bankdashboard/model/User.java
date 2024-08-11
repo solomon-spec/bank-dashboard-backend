@@ -1,6 +1,8 @@
 package com.a2sv.bankdashboard.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,60 +15,34 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@Table(name = "user")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "users")
 public class User implements UserDetails {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+    private String id;
 
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "email")
     private String email;
-
-    @Column(name = "date_of_birth")
     private Date dateOfBirth;
-
-    @Column(name = "permanent_address")
     private String permanentAddress;
-
-    @Column(name = "postal_code")
     private String postalCode;
 
     @Setter
-    @Column(name = "username")
     private String username;
 
-    @Column(name = "password")
     private String password;
-
-    @Column(name = "present_address")
     private String presentAddress;
-
-    @Column(name = "city")
     private String city;
-
-    @Column(name = "country")
     private String country;
-
-    @Column(name = "profile_picture")
     private String profilePicture;
-
-    @Column(name = "account_cash")
     private Double accountCash;
 
-    @Enumerated(value = EnumType.STRING)
+    @Field
     private Role role;
 
-    @Embedded
     private Preference preference;
 
     @Override

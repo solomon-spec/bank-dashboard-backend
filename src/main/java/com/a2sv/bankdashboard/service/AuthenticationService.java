@@ -107,7 +107,7 @@ public class AuthenticationService {
 
     }
     private void revokeAllTokenByUser(User user) {
-        List<Token> validTokens = tokenRepository.findAllAccessTokensByUser(user.getId());
+        List<Token> validTokens = tokenRepository.findByUserIdAndLoggedOutFalse(user.getId());
         if(validTokens.isEmpty()) {
             return;
         }
@@ -177,5 +177,10 @@ public class AuthenticationService {
 
         return new ApiResponse<>(true, "Password changed successfully", null);
 
+    }
+    public User getCurrentUser(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

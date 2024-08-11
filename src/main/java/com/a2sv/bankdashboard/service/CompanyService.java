@@ -74,6 +74,6 @@ public class CompanyService {
         return companyResponse;
     }
     public List<CompanyResponse> trendingStock(){
-        return companyRepository.findRandomCompanies().stream().map(this::convertToDto).toList();
+        return companyRepository.findAll().stream().map(this::convertToDto).toList();
     }
 }

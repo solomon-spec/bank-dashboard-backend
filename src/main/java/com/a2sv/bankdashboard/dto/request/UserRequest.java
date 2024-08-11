@@ -52,7 +52,7 @@ public class UserRequest {
     private String country;
 
     private String profilePicture;
-    @NotBlank
+    @NotNull
     @Valid
     private Preference preference;
 

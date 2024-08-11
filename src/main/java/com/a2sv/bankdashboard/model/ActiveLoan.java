@@ -1,18 +1,19 @@
 package com.a2sv.bankdashboard.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
+@Document(collection = "activeLoans")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActiveLoan {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long serialNumber;
+    private String serialNumber;
     private double loanAmount;
     private double amountLeftToRepay;
     private int duration;
@@ -21,7 +22,6 @@ public class ActiveLoan {
     private ActiveLoanType type;
     private ActiveLoneStatus activeLoneStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @DBRef
     private User user;
 }

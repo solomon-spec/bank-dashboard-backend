@@ -7,23 +7,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
-@Document(collection = "cards")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Card {
+@Document(collection = "transactions")
+public class Transaction {
     @Id
-    private String id;
-
-    private double balance;
-    private String cardHolder;
-    private Date expiryDate;
-    private String cardNumber;
-    private String passcode;
-    private String cardType;
+    private String transactionId;
 
     @DBRef
-    private User user;
+    private User sender;
+
+    private TransactionType type;
+    private String description;
+    private LocalDate date;
+    private double amount;
+
+    @DBRef
+    private User receiver;
 }

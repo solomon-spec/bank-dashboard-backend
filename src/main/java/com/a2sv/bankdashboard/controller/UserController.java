@@ -4,7 +4,9 @@ import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.model.Preference;
+import com.a2sv.bankdashboard.model.RandomInvestmentData;
 import com.a2sv.bankdashboard.service.UserDetailsServiceImp;
+import com.a2sv.bankdashboard.utils.RandomDataGenerator;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +42,10 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> updatePreference(@Valid @RequestBody Preference preference) {
         ApiResponse<UserResponse> response = userDetailsService.savePreference(preference);
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/random-investment-data")
+    public ResponseEntity<ApiResponse<RandomInvestmentData>> getRandomInvestmentData(@RequestParam int years, @RequestParam int months) {
+        RandomInvestmentData data = new RandomDataGenerator().generateRandomInvestmentData(years, months);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Random investment data generated successfully", data));
     }
 }
