@@ -1,20 +1,18 @@
-// src/main/java/com/a2sv/bankdashboard/service/CardService.java
 package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
 import com.a2sv.bankdashboard.model.Card;
+import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.CardRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import com.a2sv.bankdashboard.utils.RandomCardNumberGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,14 +36,27 @@ public class CardService {
         card.setCardType(cardRequest.getCardType());
 
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        card.setUser(userRepository.findByUsername(currentUserName).orElseThrow(
+        User user = userRepository.findByUsername(currentUserName).orElseThrow(
                 () -> new UsernameNotFoundException("User Not found")
-                )
         );
+        card.setUser(user);
+        if (user.getAccountCash() < card.getBalance()) {
+            throw new RuntimeException("Insufficient funds to add the card");
+        }
+        user.setAccountCash(user.getAccountCash() - card.getBalance());
+        userRepository.save(user);
+
         return convertToCardResponseDetailed(cardRepository.save(card));
     }
 
     public void removeCard(Long id) {
+        Card card = cardRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Card not found")
+        );
+        User user = card.getUser();
+
+        user.setAccountCash(user.getAccountCash() + card.getBalance());
+        userRepository.save(user);
 
         cardRepository.deleteById(id);
     }

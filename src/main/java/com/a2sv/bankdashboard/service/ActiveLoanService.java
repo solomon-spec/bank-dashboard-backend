@@ -4,6 +4,7 @@ import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
 import com.a2sv.bankdashboard.model.ActiveLoan;
 import com.a2sv.bankdashboard.model.ActiveLoneStatus;
+import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,5 +108,22 @@ public class ActiveLoanService {
         userRepository.findById(loan.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
 
         activeLoanRepository.save(loan);
+    }
+    public ActiveLoanResponse repay(Long id) {
+        ActiveLoan loan = activeLoanRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Active loan not found"));
+        User user = loan.getUser();
+        double repaymentAmount = loan.getAmountLeftToRepay();
+
+        if (user.getAccountCash() < repaymentAmount) {
+            throw new RuntimeException("Insufficient funds to repay the loan");
+        }
+
+        user.setAccountCash(user.getAccountCash() - repaymentAmount);
+        loan.setAmountLeftToRepay(0);
+        loan.setActiveLoneStatus(ActiveLoneStatus.repaid);
+
+        userRepository.save(user);
+        return convertToDto(activeLoanRepository.save(loan));
     }
 }
