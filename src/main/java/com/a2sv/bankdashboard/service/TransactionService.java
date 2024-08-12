@@ -5,6 +5,7 @@ import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
 import com.a2sv.bankdashboard.exception.InsufficientBalanceException;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
+import com.a2sv.bankdashboard.model.TimeValue;
 import com.a2sv.bankdashboard.model.Transaction;
 import com.a2sv.bankdashboard.model.TransactionType;
 import com.a2sv.bankdashboard.model.User;
@@ -16,7 +17,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,15 +102,15 @@ public class TransactionService {
         );
     }
 
-    private List<TransactionResponse> getIncomes(int page, int size){
+    public List<TransactionResponse> getIncomes(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findByReceiver(currentUser,currentUser, PageRequest.of(page, size));
+        Page<Transaction> transactionsPage = transactionRepository.findByReceiver(currentUser, PageRequest.of(page, size));
 
         return transactionsPage.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
-    private List<TransactionResponse> getExpenses(int page, int size){
+    public List<TransactionResponse> getExpenses(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findBySender(currentUser, PageRequest.of(page, size));
 
@@ -112,7 +118,7 @@ public class TransactionService {
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
-    private List<PublicUserResponse> latestTransfers(int number){
+    public List<PublicUserResponse> latestTransfers(int number){
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number));
 
@@ -127,5 +133,71 @@ public class TransactionService {
                 ))
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public TransactionResponse deposit(TransactionRequest transactionRequest) {
+        User currentUser = authenticationService.getCurrentUser();
+        if (transactionRequest.getAmount() <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero");
+        }
 
-}
+        Transaction transaction = new Transaction(
+                null,
+                currentUser,
+                TransactionType.deposit,
+                transactionRequest.getDescription(),
+                transactionRequest.getDate(),
+                transactionRequest.getAmount(),
+                null
+        );
+
+        currentUser.setAccountBalance(currentUser.getAccountBalance() + transactionRequest.getAmount());
+        userRepository.save(currentUser);
+        Transaction savedTransaction = transactionRepository.save(transaction);
+
+        return convertToResponse(savedTransaction);
+    }
+
+    public List<TimeValue> getBalanceHistory() {
+        User currentUser = authenticationService.getCurrentUser();
+        List<Transaction> transactions = transactionRepository.findBySenderOrReceiver(currentUser, currentUser);
+
+        Map<YearMonth, Double> balanceHistory = new TreeMap<>();
+        double currentBalance = currentUser.getAccountBalance();
+
+        for (Transaction transaction : transactions) {
+            YearMonth yearMonth = YearMonth.from(transaction.getDate());
+            balanceHistory.putIfAbsent(yearMonth, currentBalance);
+            if (transaction.getSender().equals(currentUser)) {
+                currentBalance -= transaction.getAmount();
+            } else {
+                currentBalance += transaction.getAmount();
+            }
+            balanceHistory.put(yearMonth, currentBalance);
+        }
+
+        return balanceHistory.entrySet().stream()
+                .map(entry -> new TimeValue(entry.getKey().toString(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+    public List<TimeValue> generateRandomBalanceHistory(int monthsBeforeFirstTransaction) {
+        User currentUser = authenticationService.getCurrentUser();
+        List<Transaction> transactions = transactionRepository.findBySenderOrReceiver(currentUser, currentUser);
+
+        LocalDate firstTransactionDate = transactions.isEmpty() ? LocalDate.now() : transactions.get(0).getDate();
+        YearMonth firstTransactionYearMonth = YearMonth.from(firstTransactionDate);
+        Random random = new Random();
+        double initialBalance = 1000 + (5000 - 1000) * random.nextDouble();
+
+        Map<YearMonth, Double> randomBalanceHistory = new TreeMap<>();
+        for (int i = monthsBeforeFirstTransaction; i > 0; i--) {
+            YearMonth yearMonth = firstTransactionYearMonth.minusMonths(i);
+            randomBalanceHistory.put(yearMonth, initialBalance);
+            initialBalance = 1000 + (5000 - 1000) * random.nextDouble();
+        }
+
+        return randomBalanceHistory.entrySet().stream()
+                .map(entry -> new TimeValue(entry.getKey().toString(), entry.getValue()))
+                .toList();
+    }
+
+    }

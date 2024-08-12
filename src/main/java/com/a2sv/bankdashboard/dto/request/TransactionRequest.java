@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ValidateReceiverUsername
 public class TransactionRequest {
 
     @NotNull(message = "Type is mandatory")
@@ -25,6 +26,5 @@ public class TransactionRequest {
 
     @NotNull(message = "Amount is mandatory")
     private double amount;
-
     private String receiverUserName;
 }

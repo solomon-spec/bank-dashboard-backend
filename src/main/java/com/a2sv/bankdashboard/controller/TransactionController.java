@@ -2,7 +2,9 @@ package com.a2sv.bankdashboard.controller;
 
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
+import com.a2sv.bankdashboard.model.TimeValue;
 import com.a2sv.bankdashboard.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/transactions")
 @Validated
 public class TransactionController {
 
@@ -48,6 +50,46 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<TransactionResponse>> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest) {
         TransactionResponse savedTransaction = transactionService.saveTransaction(transactionRequest);
         ApiResponse<TransactionResponse> response = new ApiResponse<>(true, "Transaction saved successfully", savedTransaction);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/incomes")
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getIncomes(@RequestParam int page, @RequestParam int size) {
+        List<TransactionResponse> incomes = transactionService.getIncomes(page, size);
+        ApiResponse<List<TransactionResponse>> response = new ApiResponse<>(true, "Incomes fetched successfully", incomes);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/expenses")
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getExpenses(@RequestParam int page, @RequestParam int size) {
+        List<TransactionResponse> expenses = transactionService.getExpenses(page, size);
+        ApiResponse<List<TransactionResponse>> response = new ApiResponse<>(true, "Expenses fetched successfully", expenses);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest-transfers")
+    public ResponseEntity<ApiResponse<List<PublicUserResponse>>> latestTransfers(@RequestParam int number) {
+        List<PublicUserResponse> transfers = transactionService.latestTransfers(number);
+        ApiResponse<List<PublicUserResponse>> response = new ApiResponse<>(true, "Latest transfers fetched successfully", transfers);
+        return ResponseEntity.ok(response);
+    }
+    @PostMapping("/deposit")
+    public ResponseEntity<ApiResponse<TransactionResponse>> deposit(@Valid @RequestBody TransactionRequest transactionRequest) {
+        TransactionResponse depositTransaction = transactionService.deposit(transactionRequest);
+        ApiResponse<TransactionResponse> response = new ApiResponse<>(true, "Deposit successful", depositTransaction);
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/balance-history")
+    public ResponseEntity<ApiResponse<List<TimeValue>>> getBalanceHistory() {
+        List<TimeValue> balanceHistory = transactionService.getBalanceHistory();
+        ApiResponse<List<TimeValue>> response = new ApiResponse<>(true, "Balance history retrieved successfully", balanceHistory);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/random-balance-history")
+    public ResponseEntity<ApiResponse<List<TimeValue>>> generateRandomBalanceHistory(@RequestParam int monthsBeforeFirstTransaction) {
+        List<TimeValue> randomBalanceHistory = transactionService.generateRandomBalanceHistory(monthsBeforeFirstTransaction);
+        ApiResponse<List<TimeValue>> response = new ApiResponse<>(true, "Random balance history generated successfully", randomBalanceHistory);
         return ResponseEntity.ok(response);
     }
 }
