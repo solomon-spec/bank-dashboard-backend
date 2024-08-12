@@ -29,6 +29,12 @@ public class GlobalExceptionHandler {
         ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+    // Handle insufficient balance exception
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<ApiResponse<String>> handleInsufficientBalanceException(InsufficientBalanceException ex, WebRequest request) {
+        ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 
     // Handle other exceptions
     @ExceptionHandler(Exception.class)

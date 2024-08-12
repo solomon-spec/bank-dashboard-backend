@@ -13,15 +13,15 @@ public class Preference {
 
     @Field
     @NotNull(message = "Sent or Receive Digital Currency preference is mandatory")
-    private boolean sentOrReceiveDigitalCurrency;
+    private Boolean sentOrReceiveDigitalCurrency;
 
     @Field
     @NotNull(message = "Receive Merchant Order preference is mandatory")
-    private boolean receiveMerchantOrder;
+    private Boolean receiveMerchantOrder;
 
     @Field
     @NotNull(message = "Account Recommendations preference is mandatory")
-    private boolean accountRecommendations;
+    private Boolean accountRecommendations;
 
     @Field
     @NotBlank(message = "Time Zone is mandatory")
@@ -29,5 +29,5 @@ public class Preference {
 
     @Field
     @NotNull(message = "Two Factor Authentication preference is mandatory")
-    private boolean twoFactorAuthentication;
+    private Boolean twoFactorAuthentication;
 }

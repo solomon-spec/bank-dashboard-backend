@@ -67,7 +67,7 @@ public class AuthenticationService {
         user.setCity(request.getCity());
         user.setCountry(request.getCountry());
         user.setProfilePicture(request.getProfilePicture());
-        user.setAccountCash(0.0);
+        user.setAccountBalance(0.0);
         user.setPreference(request.getPreference());
 
         user.setRole(Role.USER);

@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.service;
 import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
+import com.a2sv.bankdashboard.exception.InsufficientBalanceException;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Card;
 import com.a2sv.bankdashboard.model.User;
@@ -10,7 +11,6 @@ import com.a2sv.bankdashboard.repository.CardRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import com.a2sv.bankdashboard.utils.RandomCardNumberGenerator;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,10 +41,10 @@ public class CardService {
                 () -> new ResourceNotFoundException("User Not found")
         );
         card.setUser(user);
-        if (user.getAccountCash() < card.getBalance()) {
-            throw new RuntimeException("Insufficient funds to add the card");
+        if (user.getAccountBalance() < card.getBalance()) {
+            throw new InsufficientBalanceException("Insufficient funds to add the card");
         }
-        user.setAccountCash(user.getAccountCash() - card.getBalance());
+        user.setAccountBalance(user.getAccountBalance() - card.getBalance());
         userRepository.save(user);
 
         return convertToCardResponseDetailed(cardRepository.save(card));
@@ -56,7 +56,7 @@ public class CardService {
         );
         User user = card.getUser();
 
-        user.setAccountCash(user.getAccountCash() + card.getBalance());
+        user.setAccountBalance(user.getAccountBalance() + card.getBalance());
         userRepository.save(user);
 
         cardRepository.deleteById(id);

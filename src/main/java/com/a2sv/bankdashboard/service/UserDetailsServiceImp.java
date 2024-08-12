@@ -62,7 +62,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 user.getCity(),
                 user.getCountry(),
                 user.getProfilePicture(),
-                user.getAccountCash(),
+                user.getAccountBalance(),
                 user.getRole(),
                 user.getPreference()
         );
@@ -123,7 +123,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
                 user.getCity(),
                 user.getCountry(),
                 user.getProfilePicture(),
-                user.getAccountCash(),
+                user.getAccountBalance(),
                 user.getRole(),
                 user.getPreference()
         );

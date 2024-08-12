@@ -90,7 +90,7 @@ public class ActiveLoanService {
         loan.setActiveLoneStatus(ActiveLoneStatus.approved);
 
         userRepository.findById(loan.getUser().getId()).ifPresentOrElse(user -> {
-            user.setAccountCash(user.getAccountCash() + loan.getLoanAmount());
+            user.setAccountBalance(user.getAccountBalance() + loan.getLoanAmount());
             userRepository.save(user);
         }, () -> {
             throw new ResourceNotFoundException("User not found");
@@ -115,11 +115,11 @@ public class ActiveLoanService {
         User user = loan.getUser();
         double repaymentAmount = loan.getAmountLeftToRepay();
 
-        if (user.getAccountCash() < repaymentAmount) {
+        if (user.getAccountBalance() < repaymentAmount) {
             throw new RuntimeException("Insufficient funds to repay the loan");
         }
 
-        user.setAccountCash(user.getAccountCash() - repaymentAmount);
+        user.setAccountBalance(user.getAccountBalance() - repaymentAmount);
         loan.setAmountLeftToRepay(0);
         loan.setActiveLoneStatus(ActiveLoneStatus.repaid);
 

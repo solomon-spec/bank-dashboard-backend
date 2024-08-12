@@ -23,7 +23,7 @@ public class UserResponse {
     private String city;
     private String country;
     private String profilePicture;
-    private Double accountCash;
+    private Double accountBalance;
     private Role role;
     private Preference preference;
 }
