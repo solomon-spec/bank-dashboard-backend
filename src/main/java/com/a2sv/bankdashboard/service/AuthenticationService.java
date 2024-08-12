@@ -52,8 +52,13 @@ public class AuthenticationService {
 
         // check if user already exist. if exist than authenticate the user
         if(repository.findByUsername(request.getUsername()).isPresent()) {
-            return new ApiResponse<>(false, "User already exists", null);
+            return new ApiResponse<>(false, "User already exists with the same username", null);
         }
+        if(repository.findByEmail(request.getEmail()).isPresent()){
+            return new ApiResponse<>(false, "User already exists with the same email address", null);
+
+        }
+
 
         User user = new User();
         user.setName(request.getName());
