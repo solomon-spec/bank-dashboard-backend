@@ -2,6 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.CompanyRequest;
 import com.a2sv.bankdashboard.dto.response.CompanyResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Company;
 import com.a2sv.bankdashboard.repository.CompanyRepository;
 import jakarta.validation.Valid;
@@ -23,7 +24,7 @@ public class CompanyService {
 
     public CompanyResponse findById(String id) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         return convertToDto(company);
     }
 
@@ -35,7 +36,7 @@ public class CompanyService {
 
     public CompanyResponse update(String id, @Valid CompanyRequest companyRequest) {
         Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Company not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         company.setCompanyName(companyRequest.getCompanyName());
         company.setType(companyRequest.getType());
         company.setIcon(companyRequest.getIcon());
@@ -45,7 +46,7 @@ public class CompanyService {
 
     public void deleteById(String id) {
         if (!companyRepository.existsById(id)) {
-            throw new RuntimeException("Company not found");
+            throw new ResourceNotFoundException("Company not found");
         }
         companyRepository.deleteById(id);
     }

@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.service;
 import com.a2sv.bankdashboard.dto.request.BankServiceRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.BankServiceResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.BankService;
 import com.a2sv.bankdashboard.repository.BankServiceRepository;
 import org.springframework.data.domain.Page;
@@ -45,7 +46,7 @@ public class BankServiceService {
     }
 
     public ApiResponse<BankServiceResponse> updateService(String id, BankServiceRequest request) {
-        BankService bankService = repository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
+        BankService bankService = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Service not found"));
         bankService.setName(request.getName());
         bankService.setDetails(request.getDetails());
         bankService.setNumberOfUsers(request.getNumberOfUsers());
@@ -73,7 +74,7 @@ public class BankServiceService {
     }
 
     public ApiResponse<BankServiceResponse> getService(String id) {
-        BankService bankService = repository.findById(id).orElseThrow(() -> new RuntimeException("Service not found"));
+        BankService bankService = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Service not found"));
         BankServiceResponse response = new BankServiceResponse();
         response.setId(bankService.getId());
         response.setName(bankService.getName());

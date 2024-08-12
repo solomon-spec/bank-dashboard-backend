@@ -2,6 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.ActiveLoan;
 import com.a2sv.bankdashboard.model.ActiveLoneStatus;
 import com.a2sv.bankdashboard.model.User;
@@ -9,7 +10,6 @@ import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class ActiveLoanService {
 
     public ActiveLoanResponse findById(String id) {
         return convertToDto(activeLoanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Active loan not found")));
+                .orElseThrow(() -> new ResourceNotFoundException("Active loan not found")));
     }
 
 
@@ -67,7 +67,7 @@ public class ActiveLoanService {
         activeLoan.setActiveLoneStatus(ActiveLoneStatus.pending);
         activeLoan.setType(activeLoanRequest.getType());
         activeLoan.setUser(userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
+                () -> new ResourceNotFoundException("User not found")
         ));
         activeLoan.setAmountLeftToRepay(activeLoan.getLoanAmount());
         int numberOfPayment = activeLoanRequest.getDuration() * 12;
@@ -85,7 +85,7 @@ public class ActiveLoanService {
 
     public ActiveLoanResponse approveLoan(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Active loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Active loan not found"));
 
         loan.setActiveLoneStatus(ActiveLoneStatus.approved);
 
@@ -93,7 +93,7 @@ public class ActiveLoanService {
             user.setAccountCash(user.getAccountCash() + loan.getLoanAmount());
             userRepository.save(user);
         }, () -> {
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found");
         });
 
         return convertToDto(activeLoanRepository.save(loan));
@@ -101,17 +101,17 @@ public class ActiveLoanService {
 
     public void rejectLoan(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Active loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Active loan not found"));
 
         loan.setActiveLoneStatus(ActiveLoneStatus.rejected);
 
-        userRepository.findById(loan.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.findById(loan.getUser().getId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         activeLoanRepository.save(loan);
     }
     public ActiveLoanResponse repay(String id) {
         ActiveLoan loan = activeLoanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Active loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Active loan not found"));
         User user = loan.getUser();
         double repaymentAmount = loan.getAmountLeftToRepay();
 

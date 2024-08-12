@@ -6,6 +6,7 @@ import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Role;
 import com.a2sv.bankdashboard.model.Token;
 import com.a2sv.bankdashboard.model.User;
@@ -164,7 +165,7 @@ public class AuthenticationService {
     public ApiResponse<Void> changePassword(ChangePassword changePassword){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = repository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Validate the current password
         if (!passwordEncoder.matches(changePassword.getPassword(), user.getPassword())) {
@@ -181,6 +182,6 @@ public class AuthenticationService {
     public User getCurrentUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return repository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

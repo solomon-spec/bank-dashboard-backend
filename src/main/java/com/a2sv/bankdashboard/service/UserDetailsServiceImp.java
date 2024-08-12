@@ -5,6 +5,7 @@ import com.a2sv.bankdashboard.dto.request.UserRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Preference;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.UserRepository;
@@ -28,13 +29,13 @@ public class UserDetailsServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return repository.findByUsername(username)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+                .orElseThrow(()-> new ResourceNotFoundException("User not found"));
     }
 
 
     public ApiResponse<UserResponse> update(UserRequest request) {
         User user = repository.findByUsername(request.getUsername()).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+                new ResourceNotFoundException("User not found"));
 
 
         user.setName(request.getName());
@@ -72,7 +73,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = repository.findByUsername(currentUsername).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+                new ResourceNotFoundException("User not found"));
         user.setPreference(preference);
         user = userRepository.save(user);
         UserResponse userResponse = convertToUserDto(user);
@@ -84,7 +85,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = repository.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+                new ResourceNotFoundException("User not found"));
 
         if (username.equals(currentUsername)) {
             UserResponse userResponse = convertToUserDto(user);

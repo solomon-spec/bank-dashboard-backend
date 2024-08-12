@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.service;
 import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Card;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.CardRepository;
@@ -37,7 +38,7 @@ public class CardService {
 
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUserName).orElseThrow(
-                () -> new UsernameNotFoundException("User Not found")
+                () -> new ResourceNotFoundException("User Not found")
         );
         card.setUser(user);
         if (user.getAccountCash() < card.getBalance()) {
@@ -51,7 +52,7 @@ public class CardService {
 
     public void removeCard(String id) {
         Card card = cardRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Card not found")
+                () -> new ResourceNotFoundException("Card not found")
         );
         User user = card.getUser();
 
@@ -63,7 +64,7 @@ public class CardService {
 
     public CardResponseDetailed getCardById(String id) {
         return convertToCardResponseDetailed( cardRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Card not found")
+                () -> new ResourceNotFoundException("Card not found")
         ));
     }
 

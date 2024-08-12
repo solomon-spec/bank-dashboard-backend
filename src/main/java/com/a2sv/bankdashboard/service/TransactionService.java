@@ -2,6 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
+import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Transaction;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.TransactionRepository;
@@ -51,7 +52,7 @@ public class TransactionService {
         // Assuming User entities for sender and receiver are fetched from the database
         User sender = authenticationService.getCurrentUser();
         User receiver = userRepository.findByUsername(transactionRequest.getReceiverUserName())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return new Transaction(
                 null,
