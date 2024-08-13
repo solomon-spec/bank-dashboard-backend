@@ -1,0 +1,4 @@
+./mvnw package
+docker build -t bank-dashboard:latest .
+docker tag bank-dashboard:latest tikursew/bank-dashboard:latest
+docker push tikursew/bank-dashboard:latest
