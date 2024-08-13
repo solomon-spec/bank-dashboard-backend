@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -92,6 +93,17 @@ public class AuthenticationService {
         // Return the API response
         return new ApiResponse<>(true, "User registered successfully", authResponse);
     }
+    public AuthenticationResponse<Void> authenticate(OidcUser oidcUser){
+        User user = repository.findByUsername(oidcUser.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+
+        revokeAllTokenByUser(user);
+        saveUserToken(accessToken, refreshToken, user);
+
+        return new AuthenticationResponse<>(accessToken, refreshToken, null);
+    }
 
     public ApiResponse<AuthenticationResponse<Void>> authenticate(UserLogin request) {
         authenticationManager.authenticate(
@@ -101,7 +113,9 @@ public class AuthenticationService {
                 )
         );
 
-        User user = repository.findByUsername(request.getUserName()).orElseThrow();
+        User user = repository.findByUsername(request.getUserName()).orElseThrow(
+                () -> new ResourceNotFoundException("User does not exist")
+        );
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 

@@ -1,17 +1,22 @@
 package com.a2sv.bankdashboard.service;
 
+import com.a2sv.bankdashboard.dto.response.AuthenticationResponse;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.TokenRepository;
+import com.a2sv.bankdashboard.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -28,9 +33,11 @@ public class JwtService {
 
 
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
-    public JwtService(TokenRepository tokenRepository) {
+    public JwtService(TokenRepository tokenRepository, UserRepository userRepository) {
         this.tokenRepository = tokenRepository;
+        this.userRepository = userRepository;
     }
 
     public String extractUsername(String token) {
@@ -106,4 +113,6 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
+
+
 }

@@ -21,8 +21,6 @@ public class TransactionRequest {
     @NotBlank(message = "Description is mandatory")
     private String description;
 
-    @NotNull(message = "Date is mandatory")
-    private LocalDate date;
 
     @NotNull(message = "Amount is mandatory")
     private double amount;

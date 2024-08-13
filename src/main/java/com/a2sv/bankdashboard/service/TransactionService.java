@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,13 +75,16 @@ public class TransactionService {
             receiver = userRepository.findByUsername(transactionRequest.getReceiverUserName())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         }
+        else{
+            transactionRequest.setReceiverUserName(null);
+        }
 
         return new Transaction(
                 null,
                 sender,
                 transactionRequest.getType(),
                 transactionRequest.getDescription(),
-                transactionRequest.getDate(),
+                LocalDate.now(),
                 transactionRequest.getAmount(),
                 receiver
         );
@@ -98,7 +98,7 @@ public class TransactionService {
                 transaction.getDescription(),
                 transaction.getDate(),
                 transaction.getAmount(),
-                transaction.getReceiver().getUsername()
+                transaction.getReceiver() != null ? transaction.getReceiver().getUsername() : null
         );
     }
 
@@ -145,7 +145,7 @@ public class TransactionService {
                 currentUser,
                 TransactionType.deposit,
                 transactionRequest.getDescription(),
-                transactionRequest.getDate(),
+                LocalDate.now(),
                 transactionRequest.getAmount(),
                 null
         );
