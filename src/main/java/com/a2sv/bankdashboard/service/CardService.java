@@ -74,7 +74,10 @@ public class CardService {
 
     public List<CardResponse> getAllCardsByUserId() {
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Card> cards = cardRepository.findByUserUsername(currentUserName);
+        User user = userRepository.findByUsername(currentUserName).orElseThrow(
+                () -> new ResourceNotFoundException("User Not found")
+        );
+        List<Card> cards = cardRepository.findByUserId(user.getId());
         return cards.stream().map(this::convertToCardResponse).collect(Collectors.toList());
     }
 
