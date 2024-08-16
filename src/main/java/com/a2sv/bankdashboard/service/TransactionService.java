@@ -2,7 +2,6 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
-import com.a2sv.bankdashboard.dto.response.TotalLoanDetail;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
 import com.a2sv.bankdashboard.exception.InsufficientBalanceException;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;

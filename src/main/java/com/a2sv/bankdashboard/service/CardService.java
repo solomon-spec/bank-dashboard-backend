@@ -68,9 +68,9 @@ public class CardService {
         ));
     }
 
-    public List<CardResponse> getAllCards() {
-        return cardRepository.findAll().stream().map(this::convertToCardResponse).toList();
-    }
+//    public List<CardResponse> getAllCards() {
+//        return cardRepository.findAll().stream().map(this::convertToCardResponse).toList();
+//    }
 
     public List<CardResponse> getAllCardsByUserId() {
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
