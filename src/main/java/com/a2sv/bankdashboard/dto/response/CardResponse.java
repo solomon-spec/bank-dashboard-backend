@@ -15,4 +15,5 @@ public class CardResponse {
     private String semiCardNumber;
     private String cardType;
     private Date ExpiryDate;
+    private Double balance;
 }

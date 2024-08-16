@@ -86,8 +86,9 @@ public class CardService {
         response.setId(card.getId());
         response.setCardHolder(card.getCardHolder());
         response.setExpiryDate(card.getExpiryDate());
-        response.setSemiCardNumber(card.getCardNumber().substring(0,4));
+        response.setSemiCardNumber(card.getCardNumber().substring(0, 4) + card.getCardNumber().substring(card.getCardNumber().length() - 4));
         response.setCardType(card.getCardType());
+        response.setBalance(card.getBalance());
 
         return response;
     }
