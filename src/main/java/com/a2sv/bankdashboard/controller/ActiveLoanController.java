@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.TotalLoanDetail;
 import com.a2sv.bankdashboard.service.ActiveLoanService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,4 +57,10 @@ public class ActiveLoanController {
         activeLoanService.rejectLoan(id);
         return ResponseEntity.ok(new ApiResponse<>(true, "Loan rejected successfully", null));
     }
+    @GetMapping("/detail-data")
+    public ResponseEntity<ApiResponse<TotalLoanDetail>> getTotalLoanDetail() {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Loan rejected successfully", activeLoanService.getTotalLoanDetail()));
+    }
+
+
 }

@@ -2,8 +2,10 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
+import com.a2sv.bankdashboard.dto.response.TotalLoanDetail;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.ActiveLoan;
+import com.a2sv.bankdashboard.model.ActiveLoanType;
 import com.a2sv.bankdashboard.model.ActiveLoneStatus;
 import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
@@ -47,7 +49,10 @@ public class ActiveLoanService {
     }
     public List<ActiveLoanResponse> findUsersActiveLoans(){
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        return activeLoanRepository.findByUserUsername(currentUsername).stream().map(this::convertToDto).toList();
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return activeLoanRepository.findByUserId(user.getId()).stream().map(this::convertToDto).toList();
     }
 
 
@@ -126,4 +131,26 @@ public class ActiveLoanService {
         userRepository.save(user);
         return convertToDto(activeLoanRepository.save(loan));
     }
+    private double calculateTotalLoanAmount(List<ActiveLoan> loans) {
+        return loans.stream().mapToDouble(ActiveLoan::getLoanAmount).sum();
+    }
+    public TotalLoanDetail getTotalLoanDetail() {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        double personalLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+                .filter(loan -> loan.getType().equals(ActiveLoanType.personal)).toList());
+        double businessLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+                .filter(loan -> loan.getType().equals(ActiveLoanType.business)).toList());
+        double corporateLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+                .filter(loan -> loan.getType().equals(ActiveLoanType.corporate)).toList());
+
+        TotalLoanDetail totalLoanDetail = new TotalLoanDetail();
+        totalLoanDetail.setPersonalLoan(personalLoanTotal);
+        totalLoanDetail.setBusinessLoan(businessLoanTotal);
+        totalLoanDetail.setCorporateLoan(corporateLoanTotal);
+
+        return totalLoanDetail;
+    }
+
 }
