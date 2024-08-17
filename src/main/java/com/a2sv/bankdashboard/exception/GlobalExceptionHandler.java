@@ -43,15 +43,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<ApiResponse<String>> handleMalformedJwtException(MalformedJwtException ex) {
+        ApiResponse<String> response = new ApiResponse<>(false,ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
     // Handle other exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> handleGlobalException(Exception ex) {
         ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-    @ExceptionHandler(MalformedJwtException.class)
-    public ResponseEntity<ApiResponse<String>> handleMalformedJwtException(MalformedJwtException ex) {
-        ApiResponse<String> response = new ApiResponse<>(false,ex.getMessage(), null);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
