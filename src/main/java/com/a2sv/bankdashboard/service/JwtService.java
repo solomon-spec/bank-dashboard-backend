@@ -6,6 +6,7 @@ import com.a2sv.bankdashboard.repository.TokenRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -81,6 +82,11 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
+
+        if (token == null || !token.contains(".") || token.split("\\.").length != 3) {
+            throw new MalformedJwtException("Invalid JWT token structure");
+        }
+
         return Jwts
                 .parser()
                 .verifyWith(getSigninKey())

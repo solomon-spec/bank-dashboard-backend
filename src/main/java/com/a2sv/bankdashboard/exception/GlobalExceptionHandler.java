@@ -1,6 +1,7 @@
 package com.a2sv.bankdashboard.exception;
 
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -47,5 +48,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<String>> handleGlobalException(Exception ex, WebRequest request) {
         ApiResponse<String> response = new ApiResponse<>(false, ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+    @ExceptionHandler(MalformedJwtException.class)
+    public ResponseEntity<ApiResponse<String>> handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
+        ApiResponse<String> response = new ApiResponse<>(false,ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }
