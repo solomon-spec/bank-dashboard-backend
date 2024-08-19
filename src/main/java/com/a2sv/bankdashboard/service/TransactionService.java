@@ -128,16 +128,20 @@ public class TransactionService {
     public List<PublicUserResponse> latestTransfers(int number){
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number));
+        System.out.println(transactionsPage);
 
         return transactionsPage.stream()
-                .map(transaction -> new PublicUserResponse(
-                        transaction.getReceiver().getId(),
-                        transaction.getReceiver().getName(),
-                        transaction.getReceiver().getUsername(),
-                        transaction.getReceiver().getCity(),
-                        transaction.getReceiver().getCountry(),
-                        transaction.getReceiver().getEmail()
-                )).filter(user -> !Objects.equals(user.getUsername(), currentUser.getUsername()))
+                .map(transaction -> {
+                    User otherUser = !transaction.getReceiver().equals(currentUser) ? transaction.getReceiver(): transaction.getSender() ;
+                    return new PublicUserResponse(
+                            otherUser.getId(),
+                            otherUser.getName(),
+                            otherUser.getUsername(),
+                            otherUser.getCity(),
+                            otherUser.getCountry(),
+                            otherUser.getEmail()
+                );})
+                .filter(user -> !Objects.equals(user.getUsername(), currentUser.getUsername()))
                 .collect(Collectors.toList());
     }
     @Transactional

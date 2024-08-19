@@ -68,7 +68,7 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/latest-transfers")
+    @GetMapping("/quick-transfers")
     public ResponseEntity<ApiResponse<List<PublicUserResponse>>> latestTransfers(@RequestParam int number) {
         List<PublicUserResponse> transfers = transactionService.latestTransfers(number);
         ApiResponse<List<PublicUserResponse>> response = new ApiResponse<>(true, "Latest transfers fetched successfully", transfers);
