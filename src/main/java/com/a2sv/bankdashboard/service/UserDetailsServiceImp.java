@@ -1,7 +1,7 @@
 package com.a2sv.bankdashboard.service;
 
 
-import com.a2sv.bankdashboard.dto.request.UserRequest;
+import com.a2sv.bankdashboard.dto.request.UserUpdateRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
@@ -33,7 +33,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
     }
 
 
-    public ApiResponse<UserResponse> update(UserRequest request) {
+    public ApiResponse<UserResponse> update(UserUpdateRequest request) {
         User user = repository.findByUsername(request.getUsername()).orElseThrow(() ->
                 new ResourceNotFoundException("User not found"));
 
@@ -47,7 +47,6 @@ public class UserDetailsServiceImp implements UserDetailsService {
         user.setCity(request.getCity());
         user.setCountry(request.getCountry());
         user.setProfilePicture(request.getProfilePicture());
-        user.setPreference(request.getPreference());
         user = repository.save(user);
 
         UserResponse userResponse = new UserResponse(

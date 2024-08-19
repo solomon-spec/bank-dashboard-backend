@@ -1,6 +1,7 @@
 package com.a2sv.bankdashboard.controller;
 
-import com.a2sv.bankdashboard.dto.request.UserRequest;
+
+import com.a2sv.bankdashboard.dto.request.UserUpdateRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.UserResponse;
 import com.a2sv.bankdashboard.model.Preference;
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@Valid @RequestBody UserRequest request) {
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@Valid @RequestBody UserUpdateRequest request) {
         ApiResponse<UserResponse> response = userDetailsService.update(request);
         return ResponseEntity.ok(response);
     }
