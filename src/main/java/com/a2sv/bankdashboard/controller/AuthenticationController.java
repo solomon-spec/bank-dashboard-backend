@@ -54,7 +54,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/change_password")
-    public ResponseEntity<ApiResponse<Void>> changePassword(ChangePassword changePassword){
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid ChangePassword changePassword){
         return ResponseEntity.ok(authService.changePassword(changePassword));
     }
 }
