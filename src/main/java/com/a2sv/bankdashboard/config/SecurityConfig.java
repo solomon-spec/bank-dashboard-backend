@@ -64,7 +64,17 @@ public class SecurityConfig {
                                         (request, response, accessDeniedException)->response.setStatus(403)
                                 )
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.addAllowedOriginPattern("*");
+                    config.addAllowedMethod("GET");
+                    config.addAllowedMethod("POST");
+                    config.addAllowedMethod("PUT");
+                    config.addAllowedMethod("DELETE");
+                    config.addAllowedHeader("*");
+                    config.setAllowCredentials(true);
+                    return config;
+                }))
                 .logout(l->l
                         .logoutUrl("/logout")
                         .addLogoutHandler(logoutHandler)
