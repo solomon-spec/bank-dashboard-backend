@@ -1,5 +1,6 @@
 package com.a2sv.bankdashboard.controller;
 
+import com.a2sv.bankdashboard.dto.request.TransactionDepositRequest;
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
@@ -74,7 +75,7 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
     @PostMapping("/deposit")
-    public ResponseEntity<ApiResponse<TransactionResponse>> deposit(@Valid @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<ApiResponse<TransactionResponse>> deposit(@Valid @RequestBody TransactionDepositRequest transactionRequest) {
         TransactionResponse depositTransaction = transactionService.deposit(transactionRequest);
         ApiResponse<TransactionResponse> response = new ApiResponse<>(true, "Deposit successful", depositTransaction);
         return ResponseEntity.ok(response);

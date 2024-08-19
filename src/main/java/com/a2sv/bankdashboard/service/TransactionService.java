@@ -1,5 +1,6 @@
 package com.a2sv.bankdashboard.service;
 
+import com.a2sv.bankdashboard.dto.request.TransactionDepositRequest;
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
@@ -104,7 +105,7 @@ public class TransactionService {
 
     public List<TransactionResponse> getIncomes(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findByReceiver(currentUser, PageRequest.of(page, size));
+        Page<Transaction> transactionsPage = transactionRepository.findByTypeOrReceiver(TransactionType.deposit,currentUser, PageRequest.of(page, size));
 
         return transactionsPage.stream()
                 .map(this::convertToResponse)
@@ -112,7 +113,7 @@ public class TransactionService {
     }
     public List<TransactionResponse> getExpenses(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findBySender(currentUser, PageRequest.of(page, size));
+        Page<Transaction> transactionsPage = transactionRepository.findBySenderAndTypeNot(currentUser, TransactionType.deposit, PageRequest.of(page, size));
 
         return transactionsPage.stream()
                 .map(this::convertToResponse)
@@ -134,7 +135,7 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public TransactionResponse deposit(TransactionRequest transactionRequest) {
+    public TransactionResponse deposit(TransactionDepositRequest transactionRequest) {
         User currentUser = authenticationService.getCurrentUser();
         if (transactionRequest.getAmount() <= 0) {
             throw new IllegalArgumentException("Deposit amount must be greater than zero");
