@@ -105,9 +105,15 @@ public class TransactionService {
 
     public List<TransactionResponse> getIncomes(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findByTypeOrReceiver(TransactionType.deposit,currentUser, PageRequest.of(page, size));
+        List<Transaction> transactions1 = transactionRepository.findByReceiver(currentUser);
+        List<Transaction> transactions2 = transactionRepository.findBySenderAndType(currentUser, TransactionType.deposit);
+        transactions1.addAll(transactions2);
+        transactions1.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
+        int start = Math.min(page * size, transactions1.size());
+        int end = Math.min((page + 1) * size, transactions1.size());
+        List<Transaction> paginatedTransactions = transactions1.subList(start, end);
 
-        return transactionsPage.stream()
+        return paginatedTransactions.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -131,7 +137,7 @@ public class TransactionService {
                         transaction.getReceiver().getCity(),
                         transaction.getReceiver().getCountry(),
                         transaction.getReceiver().getEmail()
-                ))
+                )).filter(user -> !Objects.equals(user.getUsername(), currentUser.getUsername()))
                 .collect(Collectors.toList());
     }
     @Transactional

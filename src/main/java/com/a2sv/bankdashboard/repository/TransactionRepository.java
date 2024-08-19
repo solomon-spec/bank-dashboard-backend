@@ -15,6 +15,8 @@ public interface TransactionRepository extends MongoRepository<Transaction, Stri
     Page<Transaction> findBySenderOrReceiver(User sender, User receiver, Pageable pageable);
     Page<Transaction> findByTypeAndSenderOrReceiver(TransactionType type, User sender, User receiver, Pageable pageable);
     List<Transaction> findBySenderOrReceiver(User sender, User receiver);
-    Page<Transaction> findByTypeOrReceiver(TransactionType type, User receiver, Pageable pageable);
     Page<Transaction> findBySenderAndTypeNot(User sender, TransactionType type, Pageable pageable);
+    List<Transaction> findByReceiver(User receiver);
+    List<Transaction> findBySenderAndType(User sender, TransactionType type);
+
 }
