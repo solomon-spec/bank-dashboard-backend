@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.service;
 import com.a2sv.bankdashboard.dto.request.BankServiceRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.BankServiceResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.BankService;
 import com.a2sv.bankdashboard.repository.BankServiceRepository;
@@ -87,7 +88,7 @@ public class BankServiceService {
         return new ApiResponse<>(true, "Bank service retrieved successfully", response);
     }
 
-    public ApiResponse<List<BankServiceResponse>> getAllServices(int page, int size) {
+    public ApiResponse<PagedResponse<BankServiceResponse>> getAllServices(int page, int size) {
         Page<BankService> services = repository.findAll(PageRequest.of(page, size));
         List<BankServiceResponse> responses = services.stream().map(service -> {
             BankServiceResponse response = new BankServiceResponse();
@@ -101,7 +102,9 @@ public class BankServiceService {
             return response;
         }).collect(Collectors.toList());
 
-        return new ApiResponse<>(true, "Bank services retrieved successfully", responses);
+        PagedResponse<BankServiceResponse> pagedResponse = new PagedResponse<>(responses, services.getTotalPages());
+
+        return new ApiResponse<>(true, "Bank services retrieved successfully", pagedResponse);
     }
 
     public ApiResponse<List<BankServiceResponse>> searchServices(String query) {

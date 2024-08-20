@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.BankServiceRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.BankServiceResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.service.BankServiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,8 @@ public class BankServiceController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<BankServiceResponse>>> getAllServices(@RequestParam int page, @RequestParam int size) {
-        ApiResponse<List<BankServiceResponse>> response = bankServiceService.getAllServices(page, size);
+    public ResponseEntity<ApiResponse<PagedResponse<BankServiceResponse>>> getAllServices(@RequestParam int page, @RequestParam int size) {
+        ApiResponse<PagedResponse<BankServiceResponse>> response = bankServiceService.getAllServices(page, size);
         return ResponseEntity.ok(response);
     }
 
