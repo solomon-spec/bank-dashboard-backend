@@ -41,7 +41,7 @@ public class TransactionController {
     public ResponseEntity<ApiResponse<TransactionResponse>> getTransactionById(@PathVariable String id) {
         TransactionResponse transaction = transactionService.getTransactionById(id);
         if (transaction == null) {
-            ApiResponse<TransactionResponse> response = new ApiResponse<>(false, "Transaction not found", null);
+//            ApiResponse<TransactionResponse> response = new ApiResponse<>(false, "Transaction not found", null);
             return ResponseEntity.notFound().build();
         }
         ApiResponse<TransactionResponse> response = new ApiResponse<>(true, "Transaction retrieved successfully", transaction);
