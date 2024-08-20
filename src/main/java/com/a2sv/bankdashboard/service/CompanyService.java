@@ -2,10 +2,12 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.CompanyRequest;
 import com.a2sv.bankdashboard.dto.response.CompanyResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Company;
 import com.a2sv.bankdashboard.repository.CompanyRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -51,11 +53,13 @@ public class CompanyService {
         companyRepository.deleteById(id);
     }
 
-    public List<CompanyResponse> findAll(int page, int size) {
+    public PagedResponse<CompanyResponse> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return companyRepository.findAll(pageable).stream()
+        Page<Company> companyPage = companyRepository.findAll(pageable);
+        List<CompanyResponse> companyResponses = companyPage.stream()
                 .map(this::convertToDto)
-                .collect(Collectors.toList());
+                .toList();
+        return new PagedResponse<>(companyResponses, companyPage.getTotalPages());
     }
 
     public Company convertToEntity(CompanyRequest companyRequest) {

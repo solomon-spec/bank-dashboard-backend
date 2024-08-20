@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.CompanyRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
 import com.a2sv.bankdashboard.dto.response.CompanyResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.service.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CompanyResponse>>> getAllCompanies(@RequestParam int page, @RequestParam int size) {
-        List<CompanyResponse> companies = companyService.findAll(page, size);
+    public ResponseEntity<ApiResponse<PagedResponse<CompanyResponse>>> getAllCompanies(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<CompanyResponse> companies = companyService.findAll(page, size);
         return ResponseEntity.ok(new ApiResponse<>(true, "Companies retrieved successfully", companies));
     }
 
