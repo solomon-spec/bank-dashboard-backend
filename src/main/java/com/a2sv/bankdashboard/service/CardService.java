@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.service;
 import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.exception.InsufficientBalanceException;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.Card;
@@ -10,6 +11,9 @@ import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.CardRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import com.a2sv.bankdashboard.utils.RandomCardNumberGenerator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -68,17 +72,18 @@ public class CardService {
         ));
     }
 
-//    public List<CardResponse> getAllCards() {
-//        return cardRepository.findAll().stream().map(this::convertToCardResponse).toList();
-//    }
 
-    public List<CardResponse> getAllCardsByUserId() {
+    public PagedResponse<CardResponse> getAllCardsByUserId(int page, int size) {
         String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUserName).orElseThrow(
                 () -> new ResourceNotFoundException("User Not found")
         );
-        List<Card> cards = cardRepository.findByUserId(user.getId());
-        return cards.stream().map(this::convertToCardResponse).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Card> cardPage = cardRepository.findByUserId(user.getId(), pageable);
+        List<CardResponse> cardResponses = cardPage.stream()
+                .map(this::convertToCardResponse)
+                .collect(Collectors.toList());
+        return new PagedResponse<>(cardResponses, cardPage.getTotalPages());
     }
 
     private CardResponse convertToCardResponse(Card card) {

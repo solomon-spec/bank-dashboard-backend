@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.CardRequest;
 import com.a2sv.bankdashboard.dto.response.CardResponse;
 import com.a2sv.bankdashboard.dto.response.CardResponseDetailed;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.service.CardService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CardResponse>> getAllCards() {
-        List<CardResponse> cards = cardService.getAllCardsByUserId();
+    public ResponseEntity<PagedResponse<CardResponse>> getAllCards(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<CardResponse> cards = cardService.getAllCardsByUserId(page, size);
         return ResponseEntity.ok(cards);
     }
 }
