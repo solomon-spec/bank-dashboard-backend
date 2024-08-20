@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.TransactionDepositRequest;
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
 import com.a2sv.bankdashboard.model.TimeValue;
@@ -28,11 +29,11 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getAllUserTransactions(
+    public ResponseEntity<ApiResponse<PagedResponse<TransactionResponse>>> getAllUserTransactions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        List<TransactionResponse> transactions = transactionService.getAllUserTransactions(page, size);
-        ApiResponse<List<TransactionResponse>> response = new ApiResponse<>(true, "Transactions retrieved successfully", transactions);
+        PagedResponse<TransactionResponse> transactions = transactionService.getAllUserTransactions(page, size);
+        ApiResponse<PagedResponse<TransactionResponse>> response = new ApiResponse<>(true, "Transactions retrieved successfully", transactions);
         return ResponseEntity.ok(response);
     }
 
@@ -55,16 +56,16 @@ public class TransactionController {
     }
 
     @GetMapping("/incomes")
-    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getIncomes(@RequestParam int page, @RequestParam int size) {
-        List<TransactionResponse> incomes = transactionService.getIncomes(page, size);
-        ApiResponse<List<TransactionResponse>> response = new ApiResponse<>(true, "Incomes fetched successfully", incomes);
+    public ResponseEntity<ApiResponse<PagedResponse<TransactionResponse>>> getIncomes(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<TransactionResponse> incomes = transactionService.getIncomes(page, size);
+        ApiResponse<PagedResponse<TransactionResponse>> response = new ApiResponse<>(true, "Incomes fetched successfully", incomes);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/expenses")
-    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getExpenses(@RequestParam int page, @RequestParam int size) {
-        List<TransactionResponse> expenses = transactionService.getExpenses(page, size);
-        ApiResponse<List<TransactionResponse>> response = new ApiResponse<>(true, "Expenses fetched successfully", expenses);
+    public ResponseEntity<ApiResponse<PagedResponse<TransactionResponse>>> getExpenses(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<TransactionResponse> expenses = transactionService.getExpenses(page, size);
+        ApiResponse<PagedResponse<TransactionResponse>> response = new ApiResponse<>(true, "Expenses fetched successfully", expenses);
         return ResponseEntity.ok(response);
     }
 

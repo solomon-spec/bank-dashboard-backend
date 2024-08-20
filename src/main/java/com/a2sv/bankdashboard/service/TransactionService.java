@@ -2,6 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.TransactionDepositRequest;
 import com.a2sv.bankdashboard.dto.request.TransactionRequest;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
 import com.a2sv.bankdashboard.exception.InsufficientBalanceException;
@@ -36,13 +37,14 @@ public class TransactionService {
         this.userRepository = userRepository;
         this.authenticationService = authenticationService;
     }
-    public List<TransactionResponse> getAllUserTransactions(int page, int size) {
+    public PagedResponse<TransactionResponse> getAllUserTransactions(int page, int size) {
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findBySenderOrReceiver(currentUser,currentUser, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
 
-        return transactionsPage.stream()
+        List<TransactionResponse> transactionResponses =  transactionsPage.stream()
                 .map(this::convertToResponse)
-                .collect(Collectors.toList());
+                .toList();
+        return new PagedResponse<>(transactionResponses, transactionsPage.getTotalPages());
     }
 
     public TransactionResponse getTransactionById(String transactionId) {
@@ -70,7 +72,6 @@ public class TransactionService {
 
     private Transaction convertToEntity(TransactionRequest transactionRequest) {
 
-        // Assuming User entities for sender and receiver are fetched from the database
         User sender = authenticationService.getCurrentUser();
         User receiver = null;
         if(transactionRequest.getType() == TransactionType.transfer){
@@ -104,7 +105,7 @@ public class TransactionService {
         );
     }
 
-    public List<TransactionResponse> getIncomes(int page, int size){
+    public PagedResponse<TransactionResponse> getIncomes(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
         List<Transaction> transactions1 = transactionRepository.findByReceiver(currentUser);
         List<Transaction> transactions2 = transactionRepository.findBySenderAndType(currentUser, TransactionType.deposit);
@@ -112,20 +113,27 @@ public class TransactionService {
         transactions1.sort((t1, t2) -> t2.getDate().compareTo(t1.getDate()));
         int start = Math.min(page * size, transactions1.size());
         int end = Math.min((page + 1) * size, transactions1.size());
-        List<Transaction> paginatedTransactions = transactions1.subList(start, end);
-
-        return paginatedTransactions.stream()
-                .map(this::convertToResponse)
-                .collect(Collectors.toList());
+        List<TransactionResponse> paginatedTransactions = transactions1.subList(start, end)
+                .stream().map(this::convertToResponse)
+                .toList();
+        return new PagedResponse<>(paginatedTransactions, (transactions1.size() + transactions2.size())/size);
     }
-    public List<TransactionResponse> getExpenses(int page, int size){
+
+    public PagedResponse<TransactionResponse> getExpenses(int page, int size) {
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findBySenderAndTypeNot(currentUser, TransactionType.deposit, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
+        Page<Transaction> transactionsPage = transactionRepository.findBySenderAndTypeNot(
+                currentUser,
+                TransactionType.deposit,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date"))
+        );
 
-        return transactionsPage.stream()
+        List<TransactionResponse> transactionResponses = transactionsPage.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+
+        return new PagedResponse<>(transactionResponses, transactionsPage.getTotalPages());
     }
+
     public List<PublicUserResponse> latestTransfers(int number){
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number, Sort.by(Sort.Direction.DESC, "date")));
