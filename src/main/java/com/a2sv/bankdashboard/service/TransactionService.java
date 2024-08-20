@@ -128,8 +128,7 @@ public class TransactionService {
     public List<PublicUserResponse> latestTransfers(int number){
         User currentUser = authenticationService.getCurrentUser();
         Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number));
-        System.out.println(transactionsPage);
-
+        Set<String> uniqueUsernames = new HashSet<>();
         return transactionsPage.stream()
                 .map(transaction -> {
                     User otherUser = !transaction.getReceiver().equals(currentUser) ? transaction.getReceiver(): transaction.getSender() ;
@@ -141,7 +140,7 @@ public class TransactionService {
                             otherUser.getCountry(),
                             otherUser.getEmail()
                 );})
-                .filter(user -> !Objects.equals(user.getUsername(), currentUser.getUsername()))
+                .filter(user -> !Objects.equals(user.getUsername(), currentUser.getUsername()) && uniqueUsernames.add(user.getUsername()))
                 .collect(Collectors.toList());
     }
     @Transactional
