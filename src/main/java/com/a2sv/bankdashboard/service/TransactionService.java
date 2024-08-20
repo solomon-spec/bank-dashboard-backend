@@ -15,6 +15,7 @@ import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,7 @@ public class TransactionService {
     }
     public List<TransactionResponse> getAllUserTransactions(int page, int size) {
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findBySenderOrReceiver(currentUser,currentUser, PageRequest.of(page, size));
+        Page<Transaction> transactionsPage = transactionRepository.findBySenderOrReceiver(currentUser,currentUser, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
 
         return transactionsPage.stream()
                 .map(this::convertToResponse)
@@ -119,7 +120,7 @@ public class TransactionService {
     }
     public List<TransactionResponse> getExpenses(int page, int size){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findBySenderAndTypeNot(currentUser, TransactionType.deposit, PageRequest.of(page, size));
+        Page<Transaction> transactionsPage = transactionRepository.findBySenderAndTypeNot(currentUser, TransactionType.deposit, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
 
         return transactionsPage.stream()
                 .map(this::convertToResponse)
@@ -127,7 +128,7 @@ public class TransactionService {
     }
     public List<PublicUserResponse> latestTransfers(int number){
         User currentUser = authenticationService.getCurrentUser();
-        Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number));
+        Page<Transaction> transactionsPage = transactionRepository.findByTypeAndSenderOrReceiver(TransactionType.transfer,currentUser, currentUser, PageRequest.of(0, number, Sort.by(Sort.Direction.DESC, "date")));
         Set<String> uniqueUsernames = new HashSet<>();
         return transactionsPage.stream()
                 .map(transaction -> {
