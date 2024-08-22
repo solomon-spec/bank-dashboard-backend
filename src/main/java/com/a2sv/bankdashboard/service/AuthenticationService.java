@@ -119,7 +119,7 @@ public class AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        revokeAllTokenByUser(user);
+//        revokeAllTokenByUser(user);
         saveUserToken(accessToken, refreshToken, user);
 
         AuthenticationResponse<Void> authResponse = new AuthenticationResponse<>(accessToken, refreshToken, null);

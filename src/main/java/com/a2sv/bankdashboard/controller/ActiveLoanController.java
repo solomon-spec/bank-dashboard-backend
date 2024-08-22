@@ -3,6 +3,7 @@ package com.a2sv.bankdashboard.controller;
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
 import com.a2sv.bankdashboard.dto.response.ApiResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.dto.response.TotalLoanDetail;
 import com.a2sv.bankdashboard.service.ActiveLoanService;
 import jakarta.validation.Valid;
@@ -24,13 +25,13 @@ public class ActiveLoanController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ActiveLoanResponse>>> getAllActiveLoans() {
-        List<ActiveLoanResponse> loans = activeLoanService.findAll();
+    public ResponseEntity<ApiResponse<PagedResponse<ActiveLoanResponse>>> getAllActiveLoans(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<ActiveLoanResponse> loans = activeLoanService.findAll(page, size);
         return ResponseEntity.ok(new ApiResponse<>(true, "All active loans retrieved successfully", loans));
     }
     @GetMapping("/my-loans")
-    public ResponseEntity<ApiResponse<List<ActiveLoanResponse>>> getMyActiveLoans() {
-        List<ActiveLoanResponse> loans = activeLoanService.findUsersActiveLoans();
+    public ResponseEntity<ApiResponse<PagedResponse<ActiveLoanResponse>>> getMyActiveLoans(@RequestParam int page, @RequestParam int size) {
+        PagedResponse<ActiveLoanResponse> loans = activeLoanService.findUsersActiveLoans(page, size);
         return ResponseEntity.ok(new ApiResponse<>(true, "User's active loans retrieved successfully", loans));
     }
 

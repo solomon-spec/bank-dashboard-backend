@@ -2,6 +2,7 @@ package com.a2sv.bankdashboard.service;
 
 import com.a2sv.bankdashboard.dto.request.ActiveLoanRequest;
 import com.a2sv.bankdashboard.dto.response.ActiveLoanResponse;
+import com.a2sv.bankdashboard.dto.response.PagedResponse;
 import com.a2sv.bankdashboard.dto.response.TotalLoanDetail;
 import com.a2sv.bankdashboard.exception.ResourceNotFoundException;
 import com.a2sv.bankdashboard.model.ActiveLoan;
@@ -11,10 +12,14 @@ import com.a2sv.bankdashboard.model.User;
 import com.a2sv.bankdashboard.repository.ActiveLoanRepository;
 import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 
@@ -44,15 +49,25 @@ public class ActiveLoanService {
 
         );
     }
-    public List<ActiveLoanResponse> findAll() {
-        return activeLoanRepository.findAll().stream().map(this::convertToDto).toList();
+    public PagedResponse<ActiveLoanResponse> findAll(int page, int size) {
+        Page<ActiveLoan> activeLoansPage = activeLoanRepository.findAll(PageRequest.of(page, size));
+        List<ActiveLoanResponse> activeLoanResponses = activeLoansPage.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+
+        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getNumber());
     }
-    public List<ActiveLoanResponse> findUsersActiveLoans(){
+    public PagedResponse<ActiveLoanResponse> findUsersActiveLoans(int page, int size) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return activeLoanRepository.findByUserId(user.getId()).stream().map(this::convertToDto).toList();
+        Page<ActiveLoan> activeLoansPage = activeLoanRepository.findByUserId(user.getId(), PageRequest.of(page, size));
+        List<ActiveLoanResponse> activeLoanResponses = activeLoansPage.stream()
+                .map(this::convertToDto)
+                .toList();
+
+        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getNumber());
     }
 
 
@@ -138,11 +153,11 @@ public class ActiveLoanService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        double personalLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+        double personalLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId(), Pageable.unpaged()).stream()
                 .filter(loan -> loan.getType().equals(ActiveLoanType.personal)).toList());
-        double businessLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+        double businessLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId(), Pageable.unpaged()).stream()
                 .filter(loan -> loan.getType().equals(ActiveLoanType.business)).toList());
-        double corporateLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId()).stream()
+        double corporateLoanTotal = calculateTotalLoanAmount(activeLoanRepository.findByUserId(user.getId(), Pageable.unpaged()).stream()
                 .filter(loan -> loan.getType().equals(ActiveLoanType.corporate)).toList());
 
         TotalLoanDetail totalLoanDetail = new TotalLoanDetail();
