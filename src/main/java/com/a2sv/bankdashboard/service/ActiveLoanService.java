@@ -55,7 +55,7 @@ public class ActiveLoanService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
 
-        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getNumber());
+        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getTotalPages());
     }
     public PagedResponse<ActiveLoanResponse> findUsersActiveLoans(int page, int size) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -67,7 +67,7 @@ public class ActiveLoanService {
                 .map(this::convertToDto)
                 .toList();
 
-        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getNumber());
+        return new PagedResponse<>(activeLoanResponses, activeLoansPage.getTotalPages());
     }
 
 
