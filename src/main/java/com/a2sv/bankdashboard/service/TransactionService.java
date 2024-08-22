@@ -16,6 +16,7 @@ import com.a2sv.bankdashboard.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,5 +219,39 @@ public class TransactionService {
                 .map(entry -> new TimeValue(entry.getKey().toString(), entry.getValue()))
                 .toList();
     }
+    public List<TimeValue> getDailyExpense(LocalDate startDate) {
+        User currentUser = authenticationService.getCurrentUser();
+        Page<Transaction> transactions = transactionRepository.findBySenderAndTypeNot(currentUser,
+                TransactionType.deposit, Pageable.unpaged());
+
+        Map<LocalDate, Double> dailyExpenses = transactions.stream()
+                .filter(transaction -> !transaction.getDate().isBefore(startDate))
+                .collect(Collectors.groupingBy(
+                        Transaction::getDate,
+                        Collectors.summingDouble(Transaction::getAmount)
+                ));
+
+        return dailyExpenses.entrySet().stream()
+                .map(entry -> new TimeValue(entry.getKey().toString(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    public List<TimeValue> getMonthlyExpense(LocalDate startDate) {
+        User currentUser = authenticationService.getCurrentUser();
+        Page<Transaction> transactions = transactionRepository.findBySenderAndTypeNot(currentUser,
+                TransactionType.deposit, Pageable.unpaged());
+
+        Map<YearMonth, Double> monthlyExpenses = transactions.stream()
+                .filter(transaction -> !transaction.getDate().isBefore(startDate))
+                .collect(Collectors.groupingBy(
+                        transaction -> YearMonth.from(transaction.getDate()),
+                        Collectors.summingDouble(Transaction::getAmount)
+                ));
+
+        return monthlyExpenses.entrySet().stream()
+                .map(entry -> new TimeValue(entry.getKey().toString(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
 
 }

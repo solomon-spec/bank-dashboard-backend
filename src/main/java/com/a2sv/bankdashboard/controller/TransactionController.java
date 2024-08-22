@@ -8,12 +8,15 @@ import com.a2sv.bankdashboard.dto.response.PublicUserResponse;
 import com.a2sv.bankdashboard.dto.response.TransactionResponse;
 import com.a2sv.bankdashboard.model.TimeValue;
 import com.a2sv.bankdashboard.service.TransactionService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -94,4 +97,21 @@ public class TransactionController {
         ApiResponse<List<TimeValue>> response = new ApiResponse<>(true, "Random balance history generated successfully", randomBalanceHistory);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/expenses-summary")
+    public ResponseEntity<ApiResponse<List<TimeValue>>> getExpensesSummary(
+            @RequestParam LocalDate startDate,
+            @ApiParam(value = "Type of summary: 'daily' or 'monthly'", required = true, allowableValues = "daily, monthly")
+            @RequestParam String type) {
+        List<TimeValue> expenses;
+        if ("daily".equalsIgnoreCase(type)) {
+            expenses = transactionService.getDailyExpense(startDate);
+        } else if ("monthly".equalsIgnoreCase(type)) {
+            expenses = transactionService.getMonthlyExpense(startDate);
+        } else {
+            return ResponseEntity.badRequest().body(new ApiResponse<>(false, "Invalid type parameter", null));
+        }
+        ApiResponse<List<TimeValue>> response = new ApiResponse<>(true, "Expenses summary retrieved successfully", expenses);
+        return ResponseEntity.ok(response);
+    }
+
 }
