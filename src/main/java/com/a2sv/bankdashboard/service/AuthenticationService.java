@@ -93,17 +93,17 @@ public class AuthenticationService {
         // Return the API response
         return new ApiResponse<>(true, "User registered successfully", authResponse);
     }
-    public AuthenticationResponse<Void> authenticate(OidcUser oidcUser){
-        User user = repository.findByUsername(oidcUser.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        revokeAllTokenByUser(user);
-        saveUserToken(accessToken, refreshToken, user);
-
-        return new AuthenticationResponse<>(accessToken, refreshToken, null);
-    }
+//    public AuthenticationResponse<Void> authenticate(OidcUser oidcUser){
+//        User user = repository.findByUsername(oidcUser.getEmail())
+//                .orElseThrow(() -> new ResourceNotFoundException("User does not exist"));
+//        String accessToken = jwtService.generateAccessToken(user);
+//        String refreshToken = jwtService.generateRefreshToken(user);
+//
+//        revokeAllTokenByUser(user);
+//        saveUserToken(accessToken, refreshToken, user);
+//
+//        return new AuthenticationResponse<>(accessToken, refreshToken, null);
+//    }
 
     public ApiResponse<AuthenticationResponse<Void>> authenticate(UserLogin request) {
         authenticationManager.authenticate(
