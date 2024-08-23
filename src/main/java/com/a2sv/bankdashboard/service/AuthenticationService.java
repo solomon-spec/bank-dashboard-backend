@@ -145,7 +145,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    public ApiResponse<String> refreshToken(
+    public ApiResponse<AuthenticationResponse<Void>> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response) {
         // extract the token from authorization header
@@ -173,8 +173,9 @@ public class AuthenticationService {
 
             revokeAllTokenByUser(user);
             saveUserToken(accessToken, refreshToken, user);
+            AuthenticationResponse<Void> authResponse = new AuthenticationResponse<>(accessToken, refreshToken, null);
 
-            return new ApiResponse<>(true, "Token refreshed successfully", accessToken);
+            return new ApiResponse<>(true, "Token refreshed successfully", authResponse);
         }
 
         return new ApiResponse<>(false, "Invalid refresh token", null);

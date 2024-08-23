@@ -46,7 +46,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh_token")
-    public ResponseEntity<ApiResponse<String>> refreshToken(
+    public ResponseEntity<ApiResponse<AuthenticationResponse<Void>>> refreshToken(
             HttpServletRequest request,
             HttpServletResponse response
     ) {
